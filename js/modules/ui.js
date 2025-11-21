@@ -181,3 +181,6 @@ class UIModule {
         }
     }
 }
+// === AÑADIR ESTO AL FINAL DEL ARCHIVO ui.js ===
+window.UIModule = UIModule;
+console.log('✅ UIModule registrado globalmente');
