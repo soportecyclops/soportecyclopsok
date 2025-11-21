@@ -1,4 +1,6 @@
-// js/modules/helpers.js - VERSIÓN CORREGIDA (NO MODULAR)
+// js/modules/helpers.js - CONTENIDO COMPLETO Y CORREGIDO
+console.log('🛠️ Cargando Helpers module...');
+
 class Helpers {
     constructor() {
         console.log('🛠️ Helpers inicializado');
@@ -107,4 +109,24 @@ class Helpers {
         temp.textContent = str;
         return temp.innerHTML;
     }
+
+    // Método para verificar si un elemento está en viewport
+    isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
+
+    // Método para capitalizar texto
+    capitalize(text) {
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
 }
+
+// Hacer disponible globalmente
+window.Helpers = Helpers;
+console.log('✅ Helpers cargado y disponible globalmente');
