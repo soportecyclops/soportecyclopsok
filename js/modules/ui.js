@@ -1,186 +1,134 @@
-// js/modules/ui.js - VERSIÓN CORREGIDA (NO MODULAR)
-class UIModule {
-    constructor() {
-        this.isInitialized = false;
-        console.log('🎨 UI Module creado');
-    }
+// UI Module - Manejo de interfaz de usuario
+if (typeof window.UI === 'undefined') {
+    window.UI = {
+        init: function() {
+            console.log('🎨 Inicializando UI module');
+            this.initModals();
+            this.initMobileMenu();
+            this.initSmoothScroll();
+        },
 
-    init() {
-        if (this.isInitialized) return;
-        
-        console.log('🎨 Inicializando módulo de UI...');
-        
-        try {
-            this.setupEventListeners();
-            this.setupScrollEffects();
-            this.setupAnimations();
-            this.setupModals();
-            
-            this.isInitialized = true;
-            console.log('✅ UI Module inicializado correctamente');
-        } catch (error) {
-            console.error('❌ Error inicializando UI Module:', error);
-            throw error;
-        }
-    }
-
-    setupEventListeners() {
-        // Navegación móvil
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const navMenu = document.querySelector('.nav-menu');
-        
-        if (mobileMenuBtn && navMenu) {
-            mobileMenuBtn.addEventListener('click', () => {
-                navMenu.classList.toggle('active');
-                mobileMenuBtn.classList.toggle('active');
-            });
-        }
-
-        // Cerrar menú al hacer clic en enlace
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (navMenu) navMenu.classList.remove('active');
-                if (mobileMenuBtn) mobileMenuBtn.classList.remove('active');
-            });
-        });
-
-        // Smooth scroll para enlaces internos
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+        initModals: function() {
+            // Cerrar modal al hacer click fuera
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    this.hideModal(e.target);
                 }
             });
-        });
-    }
 
-    setupScrollEffects() {
-        // Usar throttle para optimizar scroll
-        const helpers = window.CyclopsAppInstance?.getModule?.('helpers') || window.Helpers;
-        const throttledScroll = helpers ? helpers.throttle(this.handleScroll.bind(this), 100) : this.handleScroll.bind(this);
-        
-        window.addEventListener('scroll', throttledScroll);
-        // Ejecutar una vez al inicio
-        this.handleScroll();
-    }
+            // Cerrar modal con ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const openModal = document.querySelector('.modal.active');
+                    if (openModal) {
+                        this.hideModal(openModal);
+                    }
+                }
+            });
+        },
 
-    handleScroll() {
-        const header = document.querySelector('.main-header');
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        initMobileMenu: function() {
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            const nav = document.querySelector('.main-nav');
 
-        if (header) {
-            if (scrollTop > 100) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
+            if (menuBtn && nav) {
+                menuBtn.addEventListener('click', () => {
+                    menuBtn.classList.toggle('active');
+                    nav.classList.toggle('active');
+                });
             }
-        }
+        },
 
-        // Animación de elementos al hacer scroll
-        this.animateOnScroll();
-    }
-
-    animateOnScroll() {
-        const animatedElements = document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right');
-        
-        animatedElements.forEach(element => {
-            const elementTop = element.getBoundingClientRect().top;
-            const elementVisible = 150;
+        initSmoothScroll: function() {
+            const links = document.querySelectorAll('a[href^="#"]');
             
-            if (elementTop < window.innerHeight - elementVisible) {
-                element.classList.add('animate');
-            }
-        });
-    }
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        const headerHeight = document.querySelector('.main-header').offsetHeight;
+                        const targetPosition = targetElement.offsetTop - headerHeight - 20;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        },
 
-    setupAnimations() {
-        // Inicializar animaciones CSS
-        const animatedElements = document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right');
-        animatedElements.forEach(el => {
-            if (!el.classList.contains('animate')) {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(30px)';
-            }
-        });
-
-        // Disparar animación inicial
-        setTimeout(() => {
-            this.animateOnScroll();
-        }, 100);
-    }
-
-    setupModals() {
-        // Configurar cierre de modals
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal') || e.target.classList.contains('close-modal')) {
-                this.hideModal(e.target.closest('.modal').id);
-            }
-        });
-
-        // Cerrar con ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.hideAllModals();
-            }
-        });
-    }
-
-    showModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            
-            // Animación de entrada
-            setTimeout(() => {
+        showModal: function(modal) {
+            if (modal) {
                 modal.classList.add('active');
-            }, 10);
+                document.body.style.overflow = 'hidden';
+            }
+        },
+
+        hideModal: function(modal) {
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        },
+
+        showLoading: function() {
+            let overlay = document.getElementById('loadingOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'loadingOverlay';
+                overlay.innerHTML = `
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>Cargando...</p>
+                    </div>
+                `;
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.7);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    color: white;
+                    font-family: Arial, sans-serif;
+                `;
+                document.body.appendChild(overlay);
+            }
+            overlay.style.display = 'flex';
+        },
+
+        hideLoading: function() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+        },
+
+        updateActiveNav: function(sectionId) {
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${sectionId}`) {
+                    link.classList.add('active');
+                }
+            });
         }
+    };
+
+    // Auto-inicialización cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => window.UI.init());
+    } else {
+        window.UI.init();
     }
 
-    hideModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.remove('active');
-            setTimeout(() => {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }, 300);
-        }
-    }
-
-    hideAllModals() {
-        document.querySelectorAll('.modal').forEach(modal => {
-            this.hideModal(modal.id);
-        });
-    }
-
-    // Método para mostrar/ocultar loading
-    showLoading(container = document.body) {
-        const loadingEl = document.createElement('div');
-        loadingEl.className = 'loading-overlay';
-        loadingEl.innerHTML = `
-            <div class="loading-spinner">
-                <div class="spinner"></div>
-                <p>Cargando...</p>
-            </div>
-        `;
-        container.appendChild(loadingEl);
-        return loadingEl;
-    }
-
-    hideLoading(loadingEl) {
-        if (loadingEl && loadingEl.parentNode) {
-            loadingEl.parentNode.removeChild(loadingEl);
-        }
-    }
+    console.log('✅ UI module cargado y disponible globalmente');
 }
-// === AÑADIR ESTO AL FINAL DEL ARCHIVO ui.js ===
-window.UIModule = UIModule;
-console.log('✅ UIModule registrado globalmente');
