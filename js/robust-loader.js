@@ -32,14 +32,7 @@ class RobustLoader {
                     console.log(`✅ ${moduleName} cargado correctamente`);
                     resolve(true);
                 } else {
-                    // Intentar con nombre alternativo
-                    if (this.tryAlternativeName(moduleName)) {
-                        this.loadedModules.set(moduleName, true);
-                        console.log(`✅ ${moduleName} cargado con nombre alternativo`);
-                        resolve(true);
-                    } else {
-                        throw new Error(`Módulo ${moduleName} no se registró globalmente`);
-                    }
+                    throw new Error(`Módulo ${moduleName} no se registró globalmente`);
                 }
             } catch (error) {
                 console.error(`❌ Error cargando ${moduleName}:`, error);
@@ -52,20 +45,6 @@ class RobustLoader {
 
         this.loadingPromises.set(moduleName, loadPromise);
         return loadPromise;
-    }
-
-    tryAlternativeName(moduleName) {
-        // Mapear nombres antiguos a nuevos
-        const nameMap = {
-            'UIModule': 'UI',
-            'AuthModule': 'Auth', 
-            'FormsModule': 'Forms',
-            'TicketsModule': 'Tickets',
-            'AgendaModule': 'Agenda'
-        };
-        
-        const alternativeName = nameMap[moduleName];
-        return alternativeName && window[alternativeName] !== undefined;
     }
 
     loadScript(src) {
@@ -95,17 +74,13 @@ class RobustLoader {
     verifyModule(moduleName) {
         const globalNames = {
             'Helpers': 'Helpers',
-            'UI': 'UI',
-            'UIModule': 'UI',
-            'Auth': 'Auth',
-            'AuthModule': 'Auth',
-            'Forms': 'Forms', 
-            'FormsModule': 'Forms',
-            'Tickets': 'Tickets',
-            'TicketsModule': 'Tickets',
-            'Agenda': 'Agenda',
-            'AgendaModule': 'Agenda',
-            'Projects': 'Projects'
+            'UIModule': 'UIModule',
+            'AuthModule': 'AuthModule',
+            'FormsModule': 'FormsModule', 
+            'TicketsModule': 'TicketsModule',
+            'AgendaModule': 'AgendaModule',
+            'Projects': 'Projects',
+            'MainApp': 'MainApp'
         };
 
         const globalName = globalNames[moduleName];
@@ -115,12 +90,12 @@ class RobustLoader {
     async loadAllModules() {
         const modules = [
             { name: 'Helpers', path: 'js/utils/helpers.js' },
-            { name: 'UI', path: 'js/modules/ui.js' },
-            { name: 'Auth', path: 'js/modules/auth.js' },
-            { name: 'Forms', path: 'js/modules/forms.js' },
-            { name: 'Projects', path: 'js/modules/projects.js' },
-            { name: 'Tickets', path: 'js/modules/tickets.js' },
-            { name: 'Agenda', path: 'js/modules/agenda.js' }
+            { name: 'UIModule', path: 'js/modules/ui.js' },
+            { name: 'AuthModule', path: 'js/modules/auth.js' },
+            { name: 'FormsModule', path: 'js/modules/forms.js' },
+            { name: 'TicketsModule', path: 'js/modules/tickets.js' },
+            { name: 'AgendaModule', path: 'js/modules/agenda.js' },
+            { name: 'Projects', path: 'js/modules/projects.js' }
         ];
 
         console.log('🚀 Iniciando carga de todos los módulos...');
@@ -143,7 +118,7 @@ class RobustLoader {
     }
 
     isCriticalModule(moduleName) {
-        const critical = ['Helpers', 'UI', 'Projects'];
+        const critical = ['Helpers', 'UIModule', 'Projects'];
         return critical.includes(moduleName);
     }
 
@@ -151,8 +126,8 @@ class RobustLoader {
         console.log(`🛠️ Creando stub para ${moduleName}`);
         
         const stubs = {
-            'UI': {
-                init: () => console.log('UI stub initialized'),
+            'UIModule': {
+                init: () => console.log('UIModule stub initialized'),
                 showModal: (modal) => modal?.classList.add('active'),
                 hideModal: (modal) => modal?.classList.remove('active')
             },
@@ -175,7 +150,7 @@ class RobustLoader {
     }
 
     areCriticalModulesLoaded() {
-        const critical = ['Helpers', 'UI', 'Projects'];
+        const critical = ['Helpers', 'UIModule', 'Projects'];
         return critical.every(module => this.loadedModules.get(module));
     }
 
@@ -206,15 +181,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('🎉 Todos los módulos críticos cargados correctamente');
             
             // Inicializar la aplicación principal
-            if (typeof window.MainApp !== 'undefined') {
+            if (typeof MainApp !== 'undefined') {
                 setTimeout(() => {
-                    window.app = new window.MainApp();
+                    window.app = new MainApp();
                     window.app.initialize().catch(console.error);
                 }, 100);
             }
         } else {
             console.warn('⚠️ Algunos módulos fallaron, pero continuando...');
-            // Inicializar aplicación básica de todos modos
             initializeBasicApp();
         }
         
@@ -226,11 +200,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function initializeBasicApp() {
     console.log('🔄 Inicializando aplicación básica...');
-    
-    // Inicializar UI básica si está disponible
-    if (window.UI && window.UI.init) {
-        window.UI.init();
-    }
     
     // Inicializar funcionalidades básicas
     initBasicFunctionality();
