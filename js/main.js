@@ -1,468 +1,246 @@
-// js/main.js - VERSIÓN MEJORADA Y CORREGIDA
-console.log('🚀 Iniciando Soporte Cyclops Oficial v1.0.0...');
-
-// Función global para mostrar errores fatales
-function showFatalError(error) {
-    console.error('❌ Error fatal:', error);
-    const errorHtml = `
-        <div class="error-container" style="padding: 2rem; text-align: center; background: #f8f9fa; border-radius: 8px; margin: 2rem;">
-            <h2 style="color: #dc3545;">Error al cargar la aplicación</h2>
-            <p>Ha ocurrido un error al inicializar Soporte Cyclops. Por favor, recarga la página.</p>
-            <button onclick="window.location.reload()" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 10px;">
-                Recargar Página
-            </button>
-            <details style="margin-top: 1rem; text-align: left;">
-                <summary>Detalles técnicos</summary>
-                <pre style="background: #fff; padding: 1rem; border-radius: 4px; overflow: auto;">${error.stack}</pre>
-            </details>
-        </div>
-    `;
-    
-    // Reemplazar el contenido del body
-    document.body.innerHTML = errorHtml;
-}
-
-// Verificar que todos los módulos estén cargados
-function checkModulesLoaded() {
-    const requiredModules = [
-        'Helpers',
-        'UIModule', 
-        'AuthModule',
-        'FormsModule',
-        'TicketsModule',
-        'AgendaModule'
-    ];
-
-    const missing = [];
-    requiredModules.forEach(module => {
-        if (typeof window[module] === 'undefined') {
-            missing.push(module);
-        }
-    });
-
-    if (missing.length > 0) {
-        throw new Error(`Módulos no cargados: ${missing.join(', ')}`);
-    }
-
-    return true;
-}
-
-// Esperar a que el DOM esté completamente cargado
-document.addEventListener('DOMContentLoaded', function() {
-    try {
-        console.log('📄 DOM cargado, verificando módulos...');
-        
-        // Verificar que todos los módulos estén disponibles
-        checkModulesLoaded();
-        
-        console.log('✅ Todos los módulos cargados, inicializando aplicación...');
-        
-        // Inicializar la aplicación
-        window.CyclopsApp = new CyclopsApp();
-        window.CyclopsApp.init();
-        
-    } catch (error) {
-        console.error('❌ Error crítico al inicializar la aplicación:', error);
-        showFatalError(error);
-    }
-});
-
-// Clase principal de la aplicación
-class CyclopsApp {
+class MainApp {
     constructor() {
         this.modules = {};
         this.isInitialized = false;
-        this.version = '1.0.0';
-        this.currentUser = null;
-        console.log('🏗️ CyclopsApp construido');
     }
 
-    init() {
+    async initialize() {
         try {
-            if (this.isInitialized) {
-                console.warn('CyclopsApp ya está inicializado');
-                return;
-            }
+            console.log('🚀 Inicializando aplicación Soporte Cyclops...');
 
-            console.log('🚀 Inicializando Soporte Cyclops v' + this.version);
-            
-            // Ocultar loading screen INMEDIATAMENTE
-            this.hideLoadingScreen();
-            
-            // Configurar botones y funcionalidades
-            this.setupGlobalFunctionality();
-            
-            // Inicializar módulos en orden correcto
-            this.initializeModules();
-            
-            this.setupGlobalErrorHandling();
-            
+            // Show loading overlay
+            this.showLoading();
+
+            // Initialize core modules
+            await this.initializeModules();
+
+            // Initialize UI components
+            this.initializeUI();
+
+            // Set up event listeners
+            this.setupEventListeners();
+
+            // Initialize projects module
+            this.modules.projects = new Projects();
+            this.modules.projects.init();
+
+            // Hide loading overlay
+            this.hideLoading();
+
             this.isInitialized = true;
-            console.log('✅ Soporte Cyclops inicializado correctamente');
+            console.log('✅ Aplicación inicializada correctamente');
+
+            // Run integrity check
+            setTimeout(() => {
+                if (typeof IntegrityChecker !== 'undefined') {
+                    IntegrityChecker.check();
+                }
+            }, 1000);
 
         } catch (error) {
-            console.error('❌ Error crítico al inicializar la aplicación:', error);
-            showFatalError(error);
+            console.error('❌ Error inicializando aplicación:', error);
+            this.hideLoading();
         }
     }
 
-    hideLoadingScreen() {
-        const loadingScreen = document.getElementById('loadingScreen');
-        if (loadingScreen) {
-            // Quitar inmediatamente sin animación molesta
-            loadingScreen.style.display = 'none';
-        }
+    async initializeModules() {
+        // Modules are loaded via script tags, just ensure they're available
+        this.modules.ui = window.UI || new UI();
+        this.modules.auth = window.Auth || new Auth();
+        this.modules.forms = window.Forms || new Forms();
+        this.modules.tickets = window.Tickets || new Tickets();
+        this.modules.agenda = window.Agenda || new Agenda();
+
+        // Initialize each module
+        Object.values(this.modules).forEach(module => {
+            if (module && typeof module.init === 'function') {
+                module.init();
+            }
+        });
     }
 
-    setupGlobalFunctionality() {
-        console.log('🔧 Configurando funcionalidades globales...');
-        
-        // Configurar botón de login
-        this.setupLoginButton();
-        
-        // Configurar botones de contacto
-        this.setupContactButtons();
-        
-        // Configurar botones de servicios
-        this.setupServiceButtons();
-        
-        // Configurar formulario de contacto
-        this.setupContactForm();
+    initializeUI() {
+        // Initialize smooth scrolling
+        this.initializeSmoothScrolling();
+
+        // Initialize header scroll effect
+        this.initializeHeaderScroll();
+
+        // Initialize mobile menu
+        this.initializeMobileMenu();
     }
 
-    setupLoginButton() {
-        const loginBtn = document.querySelector('.login-btn');
-        if (loginBtn) {
-            loginBtn.addEventListener('click', (e) => {
+    initializeSmoothScrolling() {
+        const navLinks = document.querySelectorAll('a[href^="#"]');
+        
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.showLoginModal();
-            });
-            console.log('✅ Botón de login configurado');
-        }
-    }
+                const targetId = link.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    const headerHeight = document.querySelector('.main-header').offsetHeight;
+                    const targetPosition = targetElement.offsetTop - headerHeight - 20;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
 
-    setupContactButtons() {
-        // Botón "Solicitar Soporte" en hero
-        const contactBtn = document.querySelector('.contact-btn');
-        if (contactBtn) {
-            contactBtn.addEventListener('click', () => {
-                this.showContactModal();
-            });
-        }
-        
-        // Botón "Contáctanos" en about
-        const aboutContactBtn = document.querySelector('.about-contact-btn');
-        if (aboutContactBtn) {
-            aboutContactBtn.addEventListener('click', () => {
-                this.showContactModal();
-            });
-        }
-    }
-
-    setupServiceButtons() {
-        // Botones de servicios
-        const serviceBtns = document.querySelectorAll('.service-btn');
-        serviceBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const service = btn.dataset.service;
-                this.showServiceInfo(service);
+                    // Update active nav link
+                    this.updateActiveNavLink(targetId);
+                }
             });
         });
+    }
+
+    initializeHeaderScroll() {
+        const header = document.querySelector('.main-header');
         
-        // Botón "Nuestros Servicios" en hero
-        const servicesBtn = document.querySelector('.services-btn');
-        if (servicesBtn) {
-            servicesBtn.addEventListener('click', () => {
-                document.getElementById('servicios').scrollIntoView({ 
-                    behavior: 'smooth' 
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+
+            // Update active nav link based on scroll position
+            this.updateActiveNavLinkOnScroll();
+        });
+    }
+
+    initializeMobileMenu() {
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mainNav = document.querySelector('.main-nav');
+
+        if (mobileMenuBtn && mainNav) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenuBtn.classList.toggle('active');
+                mainNav.classList.toggle('active');
+            });
+
+            // Close mobile menu when clicking on a link
+            const navLinks = mainNav.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenuBtn.classList.remove('active');
+                    mainNav.classList.remove('active');
                 });
             });
         }
     }
 
-    setupContactForm() {
+    updateActiveNavLink(targetId) {
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === targetId) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    updateActiveNavLinkOnScroll() {
+        const sections = document.querySelectorAll('section[id]');
+        const headerHeight = document.querySelector('.main-header').offsetHeight;
+        
+        let currentSection = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - headerHeight - 100;
+            const sectionHeight = section.offsetHeight;
+            
+            if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                currentSection = '#' + section.getAttribute('id');
+            }
+        });
+
+        if (currentSection) {
+            this.updateActiveNavLink(currentSection);
+        }
+    }
+
+    setupEventListeners() {
+        // Login button
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                this.modules.ui.showModal(document.getElementById('loginModal'));
+            });
+        }
+
+        // Modal close buttons
+        const closeButtons = document.querySelectorAll('.modal-close');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const modal = e.target.closest('.modal');
+                this.modules.ui.hideModal(modal);
+            });
+        }
+
+        // Contact form
         const contactForm = document.getElementById('contactForm');
         if (contactForm && this.modules.forms) {
-            // El forms module ya maneja el envío, pero podemos añadir lógica adicional
             contactForm.addEventListener('submit', (e) => {
-                // Lógica adicional si es necesaria
-                console.log('📧 Formulario de contacto enviado');
+                e.preventDefault();
+                this.modules.forms.handleContactSubmit(e);
             });
         }
-    }
 
-    showLoginModal() {
-        // Crear modal de login dinámicamente
-        const modalHtml = `
-            <div id="loginModal" class="modal">
-                <div class="modal-content modal-small">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Iniciar Sesión</h3>
-                        <span class="close-modal">&times;</span>
-                    </div>
-                    <div class="modal-body">
-                        <form id="loginForm" class="login-form">
-                            <div class="form-group">
-                                <label for="loginEmail">Email</label>
-                                <input type="email" id="loginEmail" name="email" placeholder="tu@email.com" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="loginPassword">Contraseña</label>
-                                <input type="password" id="loginPassword" name="password" placeholder="••••••••" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-full">
-                                <i class="fas fa-sign-in-alt"></i>
-                                Ingresar
-                            </button>
-                        </form>
-                        <div style="text-align: center; margin-top: var(--space-lg);">
-                            <p style="color: var(--gray-600); font-size: 0.9rem;">
-                                ¿No tienes cuenta? <a href="#" style="color: var(--primary-blue);">Regístrate aquí</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        // Añadir modal al contenedor
-        const modalsContainer = document.getElementById('modalsContainer') || document.body;
-        modalsContainer.insertAdjacentHTML('beforeend', modalHtml);
-        
-        // Mostrar modal
-        if (this.modules.ui) {
-            this.modules.ui.showModal('loginModal');
-        }
-        
-        // Configurar formulario
+        // Login form
         const loginForm = document.getElementById('loginForm');
-        if (loginForm) {
+        if (loginForm && this.modules.auth) {
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                this.handleLogin(loginForm);
-            });
-        }
-        
-        // Configurar cierre del modal
-        const closeBtn = document.querySelector('#loginModal .close-modal');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                if (this.modules.ui) {
-                    this.modules.ui.hideModal('loginModal');
-                }
+                this.modules.auth.handleLogin(e);
             });
         }
     }
 
-    showContactModal() {
-        // Simplemente hacer scroll a la sección de contacto
-        document.getElementById('contacto').scrollIntoView({ 
-            behavior: 'smooth' 
-        });
-        
-        // Opcional: mostrar notificación
-        if (this.modules.helpers) {
-            this.modules.helpers.showNotification('Completa el formulario de contacto', 'info');
+    showLoading() {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            overlay.style.display = 'flex';
         }
     }
 
-    showServiceInfo(service) {
-        const serviceNames = {
-            'soporte': 'Soporte Técnico 24/7',
-            'infraestructura': 'Infraestructura IT',
-            'desarrollo': 'Desarrollo de Software',
-            'ciberseguridad': 'Ciberseguridad',
-            'cloud': 'Cloud & Hosting',
-            'bases-datos': 'Base de Datos'
-        };
-        
-        const serviceName = serviceNames[service] || 'Servicio';
-        
-        if (this.modules.helpers) {
-            this.modules.helpers.showNotification(`Interesado en: ${serviceName}`, 'info');
+    hideLoading() {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 500);
         }
-        
-        // Hacer scroll al formulario de contacto
-        setTimeout(() => {
-            document.getElementById('contacto').scrollIntoView({ 
-                behavior: 'smooth' 
-            });
-            
-            // Seleccionar el servicio en el formulario
-            const serviceSelect = document.getElementById('contactService');
-            if (serviceSelect) {
-                serviceSelect.value = service;
-            }
-        }, 1000);
-    }
-
-    async handleLogin(form) {
-        const formData = new FormData(form);
-        const email = formData.get('email');
-        const password = formData.get('password');
-        
-        try {
-            // Mostrar loading
-            let loading;
-            if (this.modules.ui) {
-                loading = this.modules.ui.showLoading(form);
-            }
-            
-            // Simular proceso de login
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Ocultar loading
-            if (this.modules.ui && loading) {
-                this.modules.ui.hideLoading(loading);
-            }
-            
-            // Mostrar notificación de éxito
-            if (this.modules.helpers) {
-                this.modules.helpers.showNotification('¡Login exitoso! Bienvenido', 'success');
-            }
-            
-            // Cerrar modal
-            if (this.modules.ui) {
-                this.modules.ui.hideModal('loginModal');
-            }
-            
-            // Actualizar UI para usuario logueado
-            this.updateUIForLoggedInUser(email);
-            
-        } catch (error) {
-            // Ocultar loading
-            if (this.modules.ui && loading) {
-                this.modules.ui.hideLoading(loading);
-            }
-            
-            // Mostrar error
-            if (this.modules.helpers) {
-                this.modules.helpers.showNotification('Error en el login. Intenta nuevamente.', 'error');
-            }
-        }
-    }
-
-    updateUIForLoggedInUser(email) {
-        const loginBtn = document.querySelector('.login-btn');
-        if (loginBtn) {
-            loginBtn.innerHTML = `
-                <i class="fas fa-user"></i>
-                ${email.split('@')[0]}
-            `;
-            loginBtn.classList.add('logged-in');
-            
-            // Cambiar comportamiento a logout
-            loginBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.handleLogout();
-            });
-        }
-        
-        this.currentUser = { email: email, name: email.split('@')[0] };
-        console.log('👤 Usuario logueado:', this.currentUser);
-    }
-
-    handleLogout() {
-        this.currentUser = null;
-        
-        const loginBtn = document.querySelector('.login-btn');
-        if (loginBtn) {
-            loginBtn.innerHTML = `
-                <i class="fas fa-sign-in-alt"></i>
-                Acceder
-            `;
-            loginBtn.classList.remove('logged-in');
-            
-            // Restaurar comportamiento original
-            loginBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.showLoginModal();
-            });
-        }
-        
-        if (this.modules.helpers) {
-            this.modules.helpers.showNotification('Sesión cerrada correctamente', 'info');
-        }
-        
-        console.log('👤 Usuario deslogueado');
-    }
-
-    initializeModules() {
-        try {
-            console.log('📦 Inicializando módulos...');
-
-            // 1. Helpers primero (dependencia base)
-            if (typeof Helpers === 'undefined') {
-                throw new Error('Helpers no está definido. Verifica que helpers.js se cargó correctamente.');
-            }
-            this.modules.helpers = new Helpers();
-            console.log('✅ Helpers inicializado');
-
-            // 2. UI Module (depende de Helpers)
-            if (typeof UIModule === 'undefined') {
-                throw new Error('UIModule no está definido.');
-            }
-            this.modules.ui = new UIModule();
-            this.modules.ui.init();
-            console.log('✅ UI Module inicializado');
-
-            // 3. Auth Module
-            if (typeof AuthModule === 'undefined') {
-                throw new Error('AuthModule no está definido.');
-            }
-            this.modules.auth = new AuthModule();
-            this.modules.auth.init();
-            console.log('✅ Auth Module inicializado');
-
-            // 4. Forms Module
-            if (typeof FormsModule === 'undefined') {
-                throw new Error('FormsModule no está definido.');
-            }
-            this.modules.forms = new FormsModule();
-            this.modules.forms.init();
-            console.log('✅ Forms Module inicializado');
-
-            // 5. Módulos específicos
-            if (typeof TicketsModule === 'undefined') {
-                throw new Error('TicketsModule no está definido.');
-            }
-            this.modules.tickets = new TicketsModule();
-            this.modules.tickets.init();
-            console.log('✅ Tickets Module inicializado');
-
-            if (typeof AgendaModule === 'undefined') {
-                throw new Error('AgendaModule no está definido.');
-            }
-            this.modules.agenda = new AgendaModule();
-            this.modules.agenda.init();
-            console.log('✅ Agenda Module inicializado');
-
-        } catch (error) {
-            console.error('❌ Error al inicializar módulos:', error);
-            throw error;
-        }
-    }
-
-    setupGlobalErrorHandling() {
-        window.addEventListener('error', (event) => {
-            console.error('Error global capturado:', event.error);
-            if (this.modules.helpers) {
-                this.modules.helpers.showNotification('Ha ocurrido un error inesperado', 'error');
-            }
-        });
-
-        window.addEventListener('unhandledrejection', (event) => {
-            console.error('Promise rechazada:', event.reason);
-            event.preventDefault();
-        });
-    }
-
-    getModule(name) {
-        return this.modules[name];
     }
 }
 
-// Hacer disponible globalmente
-window.CyclopsApp = CyclopsApp;
-console.log('✅ CyclopsApp class definida y disponible');
+// Global functions for HTML onclick attributes
+function scrollToSection(sectionId) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+        const headerHeight = document.querySelector('.main-header').offsetHeight;
+        const offsetPosition = element.offsetTop - headerHeight;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+    }
+}
+
+function openProject(projectId) {
+    if (window.app && window.app.modules.projects) {
+        window.app.modules.projects.openProject(projectId);
+    }
+}
+
+// Initialize application when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = new MainApp();
+    window.app.initialize();
+});
+
+// Global registration
+window.MainApp = MainApp;
