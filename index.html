@@ -571,99 +571,51 @@
     <!-- Container para Modals -->
     <div id="modalsContainer"></div>
 
-    <!-- Scripts JavaScript - LOADER CORREGIDO -->
+    <!-- Scripts JavaScript - ORDEN ALTERNATIVO -->
 <script>
-console.log('🚀 INICIANDO CARGA CORREGIDA');
+console.log('🔄 CARGA CON ORDEN ALTERNATIVO');
 
-// Función para corregir ui.js automáticamente
-function fixUIModule(code) {
-    // Reemplazar la línea problemática
-    return code.replace(
-        /window\.CyclopsApp\?\.getModule\(['"]helpers['"]\)/g,
-        'window.CyclopsAppInstance?.getModule?.("helpers") || window.Helpers'
-    );
-}
+// Cargar scripts en orden que evita dependencias circulares
+const loadOrder = [
+    'js/utils/helpers.js',      // 1. Base
+    'js/modules/auth.js',       // 2. Módulos simples
+    'js/modules/forms.js',      // 3. Módulos simples  
+    'js/modules/tickets.js',    // 4. Módulos simples
+    'js/modules/agenda.js',     // 5. Módulos simples
+    'js/main.js',               // 6. App principal ANTES de UI
+    'js/modules/ui.js'          // 7. UI al FINAL
+];
 
-// Cargar módulos con correcciones
-async function loadModuleWithFixes(modulePath, moduleName) {
-    return new Promise((resolve, reject) => {
-        fetch(modulePath)
-            .then(response => response.text())
-            .then(code => {
-                let modifiedCode = code;
-                
-                // Aplicar correcciones específicas por módulo
-                if (moduleName === 'UIModule') {
-                    modifiedCode = fixUIModule(code);
-                    console.log('🔧 ui.js corregido automáticamente');
-                }
-                
-                // Añadir registro global
-                modifiedCode += `\n// REGISTRO GLOBAL\nwindow.${moduleName} = ${moduleName};\nconsole.log('✅ ${moduleName} listo');`;
-                
-                // Ejecutar el código modificado
-                const script = document.createElement('script');
-                script.textContent = modifiedCode;
-                document.head.appendChild(script);
-                
-                // Verificar que se registró
-                setTimeout(() => {
-                    if (typeof window[moduleName] !== 'undefined') {
-                        console.log(`✅ ${moduleName} cargado y corregido`);
-                        resolve();
-                    } else {
-                        console.error(`❌ ${moduleName} no se pudo registrar`);
-                        reject(new Error(`${moduleName} registration failed`));
-                    }
-                }, 100);
-            })
-            .catch(error => {
-                console.error(`❌ Error cargando ${modulePath}:`, error);
-                reject(error);
-            });
-    });
-}
-
-// Cargar todos los módulos en orden
-async function loadAllModules() {
-    const modules = [
-        { path: 'js/utils/helpers.js', name: 'Helpers' },
-        { path: 'js/modules/ui.js', name: 'UIModule' },
-        { path: 'js/modules/auth.js', name: 'AuthModule' },
-        { path: 'js/modules/forms.js', name: 'FormsModule' },
-        { path: 'js/modules/tickets.js', name: 'TicketsModule' },
-        { path: 'js/modules/agenda.js', name: 'AgendaModule' }
-    ];
-
-    console.log('📦 Cargando módulos con correcciones...');
-
-    for (const module of modules) {
+async function loadSequentially() {
+    for (const src of loadOrder) {
         try {
-            await loadModuleWithFixes(module.path, moduleName);
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => {
+                    console.log('✅', src);
+                    resolve();
+                };
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+            await new Promise(r => setTimeout(r, 50)); // Pequeña pausa
         } catch (error) {
-            console.error(`💥 Error en ${module.name}:`, error);
+            console.error('❌', src, error);
         }
-        await new Promise(resolve => setTimeout(resolve, 200));
     }
-
-    // Cargar main.js después de todos los módulos
-    console.log('🎉 Cargando aplicación principal...');
-    try {
-        await loadModuleWithFixes('js/main.js', 'CyclopsApp');
-        
-        // Inicializar la aplicación
-        if (typeof window.CyclopsApp !== 'undefined') {
-            window.CyclopsAppInstance = new window.CyclopsApp();
-            await window.CyclopsAppInstance.init();
-            console.log('🎊 APLICACIÓN INICIALIZADA CORRECTAMENTE');
+    
+    // Inicializar manualmente
+    setTimeout(() => {
+        if (window.CyclopsApp) {
+            console.log('🚀 Inicializando aplicación...');
+            const app = new window.CyclopsApp();
+            app.init();
         }
-    } catch (error) {
-        console.error('💥 Error final:', error);
-    }
+    }, 500);
 }
 
-// Iniciar carga
-document.addEventListener('DOMContentLoaded', loadAllModules);
+loadSequentially();
 </script>
 
 </body>
