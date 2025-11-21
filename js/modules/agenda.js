@@ -376,3 +376,4 @@ class AgendaModule {
         };
     }
 }
+window.AgendaModule = AgendaModule;
