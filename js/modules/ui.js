@@ -70,8 +70,14 @@ class UIModule {
         
         links.forEach(link => {
             link.addEventListener('click', (e) => {
-                e.preventDefault();
                 const targetId = link.getAttribute('href');
+                
+                // Ignorar enlaces que solo tienen "#"
+                if (targetId === '#') {
+                    return;
+                }
+                
+                e.preventDefault();
                 const targetElement = document.querySelector(targetId);
                 
                 if (targetElement) {
