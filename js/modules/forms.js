@@ -36,3 +36,4 @@ if (typeof window.Forms === 'undefined') {
     };
     console.log('✅ Forms module loaded');
 }
+window.FormsModule = FormsModule;
