@@ -44,14 +44,30 @@ class UIModule {
                 if (mobileMenuBtn) mobileMenuBtn.classList.remove('active');
             });
         });
+
+        // Smooth scroll para enlaces internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     }
 
     setupScrollEffects() {
         // Usar throttle para optimizar scroll
-        const throttledScroll = window.CyclopsApp?.getModule('helpers')?.throttle?.(this.handleScroll.bind(this), 100) || 
-                              this.handleScroll.bind(this);
+        const helpers = window.CyclopsApp?.getModule('helpers');
+        const throttledScroll = helpers ? helpers.throttle(this.handleScroll.bind(this), 100) : this.handleScroll.bind(this);
         
         window.addEventListener('scroll', throttledScroll);
+        // Ejecutar una vez al inicio
+        this.handleScroll();
     }
 
     handleScroll() {
@@ -87,8 +103,10 @@ class UIModule {
         // Inicializar animaciones CSS
         const animatedElements = document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right');
         animatedElements.forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
+            if (!el.classList.contains('animate')) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+            }
         });
 
         // Disparar animación inicial
@@ -98,23 +116,68 @@ class UIModule {
     }
 
     setupModals() {
-        // Lógica de modals aquí (simplificada)
-        console.log('🔧 Modals configurados');
+        // Configurar cierre de modals
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal') || e.target.classList.contains('close-modal')) {
+                this.hideModal(e.target.closest('.modal').id);
+            }
+        });
+
+        // Cerrar con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.hideAllModals();
+            }
+        });
     }
 
     showModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
-            modal.style.display = 'block';
+            modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
+            
+            // Animación de entrada
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 10);
         }
     }
 
     hideModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }, 300);
+        }
+    }
+
+    hideAllModals() {
+        document.querySelectorAll('.modal').forEach(modal => {
+            this.hideModal(modal.id);
+        });
+    }
+
+    // Método para mostrar/ocultar loading
+    showLoading(container = document.body) {
+        const loadingEl = document.createElement('div');
+        loadingEl.className = 'loading-overlay';
+        loadingEl.innerHTML = `
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Cargando...</p>
+            </div>
+        `;
+        container.appendChild(loadingEl);
+        return loadingEl;
+    }
+
+    hideLoading(loadingEl) {
+        if (loadingEl && loadingEl.parentNode) {
+            loadingEl.parentNode.removeChild(loadingEl);
         }
     }
 }
