@@ -571,29 +571,35 @@
     <!-- Container para Modals -->
     <div id="modalsContainer"></div>
 
-    <!-- Scripts JavaScript - LOADER DE EMERGENCIA -->
+    <!-- Scripts JavaScript - LOADER CORREGIDO -->
 <script>
-console.log('🚀 INICIANDO CARGA DE EMERGENCIA');
+console.log('🚀 INICIANDO CARGA CORREGIDA');
 
-// Función para inyectar código de registro global
-function injectGlobalRegistration(moduleName) {
-    const code = `
-        if (typeof ${moduleName} !== 'undefined') {
-            window.${moduleName} = ${moduleName};
-            console.log('✅ ${moduleName} registrado globalmente');
-        }
-    `;
-    return code;
+// Función para corregir ui.js automáticamente
+function fixUIModule(code) {
+    // Reemplazar la línea problemática
+    return code.replace(
+        /window\.CyclopsApp\?\.getModule\(['"]helpers['"]\)/g,
+        'window.CyclopsAppInstance?.getModule?.("helpers") || window.Helpers'
+    );
 }
 
-// Cargar módulos con registro forzado
-async function loadModuleWithRegistration(modulePath, moduleName) {
+// Cargar módulos con correcciones
+async function loadModuleWithFixes(modulePath, moduleName) {
     return new Promise((resolve, reject) => {
         fetch(modulePath)
             .then(response => response.text())
             .then(code => {
-                // Añadir registro global al código
-                const modifiedCode = code + `\n// REGISTRO GLOBAL INYECTADO\nwindow.${moduleName} = ${moduleName};\nconsole.log('✅ ${moduleName} registrado');`;
+                let modifiedCode = code;
+                
+                // Aplicar correcciones específicas por módulo
+                if (moduleName === 'UIModule') {
+                    modifiedCode = fixUIModule(code);
+                    console.log('🔧 ui.js corregido automáticamente');
+                }
+                
+                // Añadir registro global
+                modifiedCode += `\n// REGISTRO GLOBAL\nwindow.${moduleName} = ${moduleName};\nconsole.log('✅ ${moduleName} listo');`;
                 
                 // Ejecutar el código modificado
                 const script = document.createElement('script');
@@ -603,7 +609,7 @@ async function loadModuleWithRegistration(modulePath, moduleName) {
                 // Verificar que se registró
                 setTimeout(() => {
                     if (typeof window[moduleName] !== 'undefined') {
-                        console.log(`✅ ${moduleName} cargado correctamente`);
+                        console.log(`✅ ${moduleName} cargado y corregido`);
                         resolve();
                     } else {
                         console.error(`❌ ${moduleName} no se pudo registrar`);
@@ -618,7 +624,7 @@ async function loadModuleWithRegistration(modulePath, moduleName) {
     });
 }
 
-// Cargar todos los módulos
+// Cargar todos los módulos en orden
 async function loadAllModules() {
     const modules = [
         { path: 'js/utils/helpers.js', name: 'Helpers' },
@@ -629,43 +635,30 @@ async function loadAllModules() {
         { path: 'js/modules/agenda.js', name: 'AgendaModule' }
     ];
 
-    console.log('📦 Cargando módulos con registro forzado...');
+    console.log('📦 Cargando módulos con correcciones...');
 
     for (const module of modules) {
         try {
-            await loadModuleWithRegistration(module.path, module.name);
+            await loadModuleWithFixes(module.path, moduleName);
         } catch (error) {
             console.error(`💥 Error en ${module.name}:`, error);
-            // Continuar con otros módulos
         }
         await new Promise(resolve => setTimeout(resolve, 200));
     }
 
-    // Verificar estado final
-    console.log('📊 ESTADO FINAL:');
-    modules.forEach(module => {
-        const status = typeof window[module.name] !== 'undefined' ? '✅' : '❌';
-        console.log(`${status} ${module.name}`);
-    });
-
-    // Cargar main.js si todos los módulos críticos están listos
-    const criticalModules = ['Helpers', 'UIModule', 'AuthModule', 'FormsModule'];
-    const allCriticalLoaded = criticalModules.every(mod => typeof window[mod] !== 'undefined');
-    
-    if (allCriticalLoaded) {
-        console.log('🎉 Cargando aplicación principal...');
-        loadModuleWithRegistration('js/main.js', 'CyclopsApp')
-            .then(() => {
-                if (typeof window.CyclopsApp !== 'undefined') {
-                    window.CyclopsAppInstance = new window.CyclopsApp();
-                    window.CyclopsAppInstance.init();
-                }
-            })
-            .catch(error => {
-                console.error('💥 Error cargando main.js:', error);
-            });
-    } else {
-        console.error('❌ Módulos críticos faltantes - no se puede cargar la aplicación');
+    // Cargar main.js después de todos los módulos
+    console.log('🎉 Cargando aplicación principal...');
+    try {
+        await loadModuleWithFixes('js/main.js', 'CyclopsApp');
+        
+        // Inicializar la aplicación
+        if (typeof window.CyclopsApp !== 'undefined') {
+            window.CyclopsAppInstance = new window.CyclopsApp();
+            await window.CyclopsAppInstance.init();
+            console.log('🎊 APLICACIÓN INICIALIZADA CORRECTAMENTE');
+        }
+    } catch (error) {
+        console.error('💥 Error final:', error);
     }
 }
 
