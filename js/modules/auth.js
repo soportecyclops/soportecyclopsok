@@ -21,3 +21,4 @@ if (typeof window.Auth === 'undefined') {
     };
     console.log('✅ Auth module loaded');
 }
+window.FormsModule = FormsModule;
