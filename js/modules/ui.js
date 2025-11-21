@@ -62,7 +62,7 @@ class UIModule {
 
     setupScrollEffects() {
         // Usar throttle para optimizar scroll
-        const helpers = window.CyclopsApp?.getModule('helpers');
+        const helpers = window.CyclopsAppInstance?.getModule?.('helpers') || window.Helpers;
         const throttledScroll = helpers ? helpers.throttle(this.handleScroll.bind(this), 100) : this.handleScroll.bind(this);
         
         window.addEventListener('scroll', throttledScroll);
