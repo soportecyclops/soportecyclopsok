@@ -1,4 +1,4 @@
-// js/load-modules.js - Cargador robusto de módulos
+// js/load-modules.js
 console.log('🔧 Iniciando cargador de módulos...');
 
 function loadScript(src) {
@@ -17,7 +17,6 @@ function loadScript(src) {
     });
 }
 
-// Cargar módulos en orden secuencial
 async function loadAllModules() {
     try {
         console.log('📦 Cargando módulos...');
@@ -55,7 +54,6 @@ function showFatalError(error) {
     document.body.innerHTML = errorHtml;
 }
 
-// Iniciar carga cuando el DOM esté listo
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', loadAllModules);
 } else {
