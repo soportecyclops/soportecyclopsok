@@ -571,23 +571,10 @@
     <!-- Container para Modals -->
     <div id="modalsContainer"></div>
 
-<!-- Reemplaza TODOS tus scripts con esto -->
-<script src="js/diagnostic.js"></script>
-<script src="js/robust-loader.js"></script>
+    <!-- Scripts de diagnóstico y corrección -->
+    <script src="js/diagnostic.js"></script>
+    <script src="js/fix-modules.js"></script>
+    <script src="js/robust-loader.js"></script>
 
-    <!-- Service Worker (opcional) -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                        console.log('ServiceWorker registrado correctamente:', registration.scope);
-                    })
-                    .catch(function(error) {
-                        console.log('ServiceWorker no registrado:', error);
-                    });
-            });
-        }
-    </script>
 </body>
 </html>
