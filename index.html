@@ -571,51 +571,88 @@
     <!-- Container para Modals -->
     <div id="modalsContainer"></div>
 
-    <!-- Scripts JavaScript - ORDEN ALTERNATIVO -->
+    <!-- Scripts JavaScript - LOADER DEFINITIVO -->
 <script>
-console.log('🔄 CARGA CON ORDEN ALTERNATIVO');
+console.log('🚀 INICIANDO CARGA DEFINITIVA');
 
-// Cargar scripts en orden que evita dependencias circulares
-const loadOrder = [
-    'js/utils/helpers.js',      // 1. Base
-    'js/modules/auth.js',       // 2. Módulos simples
-    'js/modules/forms.js',      // 3. Módulos simples  
-    'js/modules/tickets.js',    // 4. Módulos simples
-    'js/modules/agenda.js',     // 5. Módulos simples
-    'js/main.js',               // 6. App principal ANTES de UI
-    'js/modules/ui.js'          // 7. UI al FINAL
-];
-
-async function loadSequentially() {
-    for (const src of loadOrder) {
-        try {
-            await new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = src;
-                script.onload = () => {
-                    console.log('✅', src);
-                    resolve();
-                };
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-            await new Promise(r => setTimeout(r, 50)); // Pequeña pausa
-        } catch (error) {
-            console.error('❌', src, error);
-        }
-    }
-    
-    // Inicializar manualmente
-    setTimeout(() => {
-        if (window.CyclopsApp) {
-            console.log('🚀 Inicializando aplicación...');
-            const app = new window.CyclopsApp();
-            app.init();
-        }
-    }, 500);
+// Función para corregir ui.js específicamente
+function fixUIModule(code) {
+    // Reemplazar window.CyclopsApp por window.CyclopsAppInstance
+    return code.replace(
+        /window\.CyclopsApp\?\.getModule\(['"]helpers['"]\)/g,
+        'window.CyclopsAppInstance?.getModule?.("helpers")'
+    ).replace(
+        /window\.CyclopsApp\?\.getModule/g,
+        'window.CyclopsAppInstance?.getModule'
+    );
 }
 
-loadSequentially();
+// Cargar módulo con correcciones específicas
+async function loadModule(modulePath, moduleName) {
+    return new Promise((resolve, reject) => {
+        fetch(modulePath)
+            .then(response => response.text())
+            .then(code => {
+                let modifiedCode = code;
+                
+                // Aplicar correcciones solo a ui.js
+                if (moduleName === 'UIModule') {
+                    modifiedCode = fixUIModule(code);
+                    console.log('🔧 ui.js corregido - CyclopsApp → CyclopsAppInstance');
+                }
+                
+                // Añadir registro global
+                modifiedCode += `\nwindow.${moduleName} = ${moduleName};`;
+                
+                // Ejecutar el código
+                const script = document.createElement('script');
+                script.textContent = modifiedCode;
+                document.head.appendChild(script);
+                
+                setTimeout(() => {
+                    if (typeof window[moduleName] !== 'undefined') {
+                        console.log(`✅ ${moduleName} listo`);
+                        resolve();
+                    } else {
+                        reject(new Error(`${moduleName} no registrado`));
+                    }
+                }, 100);
+            })
+            .catch(reject);
+    });
+}
+
+// Cargar en orden CORRECTO
+async function loadAll() {
+    console.log('📦 Cargando módulos...');
+    
+    // 1. Helpers primero
+    await loadModule('js/utils/helpers.js', 'Helpers');
+    
+    // 2. Módulos principales (excepto ui.js)
+    await loadModule('js/modules/auth.js', 'AuthModule');
+    await loadModule('js/modules/forms.js', 'FormsModule');
+    await loadModule('js/modules/tickets.js', 'TicketsModule');
+    await loadModule('js/modules/agenda.js', 'AgendaModule');
+    
+    // 3. Main.js antes de ui.js
+    await loadModule('js/main.js', 'CyclopsApp');
+    
+    // 4. UI Module al FINAL (después de que CyclopsApp existe)
+    await loadModule('js/modules/ui.js', 'UIModule');
+    
+    console.log('🎉 Todos los módulos cargados');
+    
+    // Inicializar aplicación
+    if (window.CyclopsApp) {
+        window.CyclopsAppInstance = new window.CyclopsApp();
+        window.CyclopsAppInstance.init();
+        console.log('🎊 APLICACIÓN INICIADA CORRECTAMENTE');
+    }
+}
+
+// Iniciar
+document.addEventListener('DOMContentLoaded', loadAll);
 </script>
 
 </body>
