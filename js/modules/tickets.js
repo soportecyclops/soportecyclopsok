@@ -266,3 +266,4 @@ class TicketsModule {
         };
     }
 }
+window.TicketsModule = TicketsModule;
