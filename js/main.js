@@ -28,28 +28,25 @@ class MainApp {
     }
 
     async initializeModules() {
-        // Wait for modules to be loaded by robust-loader
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Initialize available modules
-        if (window.UI) {
-            this.modules.ui = window.UI;
-            this.modules.ui.init();
+        // Modules are loaded via script tags, just ensure they're available
+        if (typeof UIModule !== 'undefined') {
+            this.modules.ui = UIModule;
+            UIModule.init();
         }
         
-        if (window.Auth) {
-            this.modules.auth = window.Auth;
-            this.modules.auth.init();
+        if (typeof AuthModule !== 'undefined') {
+            this.modules.auth = AuthModule;
+            AuthModule.init();
         }
         
-        if (window.Forms) {
-            this.modules.forms = window.Forms;
-            this.modules.forms.init();
+        if (typeof FormsModule !== 'undefined') {
+            this.modules.forms = FormsModule;
+            FormsModule.init();
         }
         
-        if (window.Projects) {
-            this.modules.projects = window.Projects;
-            this.modules.projects.init();
+        if (typeof Projects !== 'undefined') {
+            this.modules.projects = Projects;
+            Projects.init();
         }
 
         console.log('📦 Módulos inicializados:', Object.keys(this.modules));
@@ -167,6 +164,15 @@ class MainApp {
             });
         }
 
+        // Modal close buttons
+        const closeButtons = document.querySelectorAll('.modal-close');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const modal = e.target.closest('.modal');
+                this.hideModal(modal);
+            });
+        });
+
         // Contact form
         const contactForm = document.getElementById('contactForm');
         if (contactForm) {
@@ -196,6 +202,13 @@ class MainApp {
 
     hideLoginModal() {
         const modal = document.getElementById('loginModal');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+
+    hideModal(modal) {
         if (modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
@@ -250,8 +263,8 @@ function scrollToSection(sectionId) {
 }
 
 function openProject(projectId) {
-    if (window.Projects) {
-        window.Projects.openProject(projectId);
+    if (typeof Projects !== 'undefined') {
+        Projects.openProject(projectId);
     } else {
         console.warn('Projects module not available');
         // Fallback: open in new tab
@@ -266,13 +279,10 @@ function openProject(projectId) {
     }
 }
 
-// Initialize application when modules are ready
+// Initialize application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Wait a bit for modules to load
-    setTimeout(() => {
-        window.app = new MainApp();
-        window.app.initialize().catch(console.error);
-    }, 500);
+    window.app = new MainApp();
+    window.app.initialize().catch(console.error);
 });
 
 // Global registration
