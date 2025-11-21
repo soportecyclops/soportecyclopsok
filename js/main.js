@@ -28,29 +28,32 @@ class MainApp {
     }
 
     async initializeModules() {
-        // Modules are loaded via script tags, just ensure they're available
-        if (typeof UIModule !== 'undefined') {
-            this.modules.ui = UIModule;
-            UIModule.init();
-        }
-        
-        if (typeof AuthModule !== 'undefined') {
-            this.modules.auth = AuthModule;
-            AuthModule.init();
-        }
-        
-        if (typeof FormsModule !== 'undefined') {
-            this.modules.forms = FormsModule;
-            FormsModule.init();
-        }
-        
-        if (typeof Projects !== 'undefined') {
-            this.modules.projects = Projects;
-            Projects.init();
-        }
-
-        console.log('📦 Módulos inicializados:', Object.keys(this.modules));
+    // Wait for modules to be loaded by robust-loader
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Initialize available modules - VERIFICAR QUE EXISTAN COMO CLASES
+    if (typeof UIModule !== 'undefined') {
+        this.modules.ui = new UIModule();
+        this.modules.ui.init();
     }
+    
+    if (typeof AuthModule !== 'undefined') {
+        this.modules.auth = new AuthModule();
+        this.modules.auth.init();
+    }
+    
+    if (typeof FormsModule !== 'undefined') {
+        this.modules.forms = new FormsModule();
+        this.modules.forms.init();
+    }
+    
+    if (typeof Projects !== 'undefined') {
+        this.modules.projects = Projects;
+        this.modules.projects.init();
+    }
+
+    console.log('📦 Módulos inicializados:', Object.keys(this.modules));
+}
 
     initializeUI() {
         // Initialize smooth scrolling
