@@ -1,126 +1,75 @@
-/* ===== VARIABLES GLOBALES ACTUALIZADAS ===== */
 :root {
-    /* ===== PALETA DE COLORES CYCLOPS ===== */
+    /* Colores principales - Tema tecnológico */
     --primary-blue: #0066cc;
     --primary-dark: #004499;
-    --primary-light: #3388ff;
-    --primary-gradient: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+    --primary-light: #3399ff;
     
-    /* Colores secundarios tecnológicos */
-    --cyber-blue: #00d4ff;
-    --tech-purple: #8a2be2;
-    --data-green: #00ff88;
-    --warning-orange: #ff6b35;
-    --error-red: #ff4444;
+    /* Colores acento - Cibernético */
+    --accent-cyan: #00ffff;
+    --accent-purple: #9966ff;
+    --accent-green: #00ff99;
     
-    /* Escala de grises moderna */
-    --text-dark: #1a1a1a;
-    --text-medium: #4a4a4a;
-    --text-light: #6b7280;
-    --bg-dark: #0a0a0a;
-    --bg-light: #f8fafc;
-    --bg-white: #ffffff;
-    --border-light: #e5e7eb;
-    --border-medium: #d1d5db;
-    --border-dark: #374151;
+    /* Escala de grises */
+    --gray-50: #f8f9fa;
+    --gray-100: #e9ecef;
+    --gray-200: #dee2e6;
+    --gray-300: #ced4da;
+    --gray-400: #adb5bd;
+    --gray-500: #6c757d;
+    --gray-600: #495057;
+    --gray-700: #343a40;
+    --gray-800: #212529;
+    --gray-900: #121416;
     
-    /* Colores de estado */
-    --success: #10b981;
-    --warning: #f59e0b;
-    --error: #ef4444;
-    --info: #3b82f6;
+    /* Colores semánticos */
+    --success: #28a745;
+    --warning: #ffc107;
+    --error: #dc3545;
+    --info: #17a2b8;
     
-    /* ===== TIPOGRAFÍA PREMIUM ===== */
-    --font-primary: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    /* Tipografía */
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
     
-    /* Escala de tamaños */
-    --font-size-xs: 0.75rem;
-    --font-size-sm: 0.875rem;
-    --font-size-base: 1rem;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.25rem;
-    --font-size-2xl: 1.5rem;
-    --font-size-3xl: 1.875rem;
-    --font-size-4xl: 2.25rem;
-    --font-size-5xl: 3rem;
-    --font-size-6xl: 3.75rem;
+    /* Espaciado */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
     
-    /* ===== ESPACIADO Y LAYOUT ===== */
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    --spacing-2xl: 3rem;
-    --spacing-3xl: 4rem;
-    --spacing-4xl: 6rem;
+    /* Bordes */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
     
-    /* ===== BORDES Y SOMBRAS ===== */
-    --border-radius: 8px;
-    --border-radius-lg: 12px;
-    --border-radius-xl: 16px;
-    --border-radius-2xl: 24px;
+    /* Sombras */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.2);
     
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    
-    /* Sombras de neón para elementos tecnológicos */
-    --glow-blue: 0 0 20px rgba(0, 102, 204, 0.5);
-    --glow-cyber: 0 0 15px rgba(0, 212, 255, 0.6);
-    --glow-purple: 0 0 15px rgba(138, 43, 226, 0.4);
-    
-    /* ===== TRANSICIONES Y ANIMACIONES ===== */
+    /* Animaciones */
     --transition-fast: 0.15s ease;
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
-    --transition-bounce: 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     
-    /* ===== BREAKPOINTS RESPONSIVE ===== */
+    /* Breakpoints */
     --breakpoint-sm: 640px;
     --breakpoint-md: 768px;
     --breakpoint-lg: 1024px;
     --breakpoint-xl: 1280px;
     --breakpoint-2xl: 1536px;
-    
-    /* ===== Z-INDEX ESCALADO ===== */
-    --z-dropdown: 1000;
-    --z-sticky: 1020;
-    --z-fixed: 1030;
-    --z-modal-backdrop: 1040;
-    --z-modal: 1050;
-    --z-popover: 1060;
-    --z-tooltip: 1070;
-    --z-toast: 1080;
 }
 
-/* ===== MODO OSCURO (FUTURO) ===== */
-[data-theme="dark"] {
-    --text-dark: #ffffff;
-    --text-medium: #e5e7eb;
-    --text-light: #9ca3af;
-    --bg-dark: #0a0a0a;
-    --bg-light: #111827;
-    --bg-white: #1f2937;
-    --border-light: #374151;
-    --border-medium: #4b5563;
-}
-
-/* ===== GRADIENTES ESPECIALES ===== */
-.gradient-text {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--cyber-blue) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.cyber-gradient {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--tech-purple) 50%, var(--cyber-blue) 100%);
-}
-
-.tech-gradient {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--data-green) 100%);
+/* Modo oscuro (para futuro) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --gray-50: #121416;
+        --gray-100: #212529;
+        --gray-900: #f8f9fa;
+    }
 }
