@@ -1,4 +1,4 @@
-// js/main.js - VERSIÓN COMPLETAMENTE CORREGIDA
+// js/main.js - VERSIÓN MEJORADA Y CORREGIDA
 console.log('🚀 Iniciando Soporte Cyclops Oficial v1.0.0...');
 
 // Función global para mostrar errores fatales
@@ -73,6 +73,7 @@ class CyclopsApp {
         this.modules = {};
         this.isInitialized = false;
         this.version = '1.0.0';
+        this.currentUser = null;
         console.log('🏗️ CyclopsApp construido');
     }
 
@@ -85,8 +86,11 @@ class CyclopsApp {
 
             console.log('🚀 Inicializando Soporte Cyclops v' + this.version);
             
-            // Ocultar loading screen
+            // Ocultar loading screen INMEDIATAMENTE
             this.hideLoadingScreen();
+            
+            // Configurar botones y funcionalidades
+            this.setupGlobalFunctionality();
             
             // Inicializar módulos en orden correcto
             this.initializeModules();
@@ -105,13 +109,283 @@ class CyclopsApp {
     hideLoadingScreen() {
         const loadingScreen = document.getElementById('loadingScreen');
         if (loadingScreen) {
-            setTimeout(() => {
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 500);
-            }, 1000);
+            // Quitar inmediatamente sin animación molesta
+            loadingScreen.style.display = 'none';
         }
+    }
+
+    setupGlobalFunctionality() {
+        console.log('🔧 Configurando funcionalidades globales...');
+        
+        // Configurar botón de login
+        this.setupLoginButton();
+        
+        // Configurar botones de contacto
+        this.setupContactButtons();
+        
+        // Configurar botones de servicios
+        this.setupServiceButtons();
+        
+        // Configurar formulario de contacto
+        this.setupContactForm();
+    }
+
+    setupLoginButton() {
+        const loginBtn = document.querySelector('.login-btn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showLoginModal();
+            });
+            console.log('✅ Botón de login configurado');
+        }
+    }
+
+    setupContactButtons() {
+        // Botón "Solicitar Soporte" en hero
+        const contactBtn = document.querySelector('.contact-btn');
+        if (contactBtn) {
+            contactBtn.addEventListener('click', () => {
+                this.showContactModal();
+            });
+        }
+        
+        // Botón "Contáctanos" en about
+        const aboutContactBtn = document.querySelector('.about-contact-btn');
+        if (aboutContactBtn) {
+            aboutContactBtn.addEventListener('click', () => {
+                this.showContactModal();
+            });
+        }
+    }
+
+    setupServiceButtons() {
+        // Botones de servicios
+        const serviceBtns = document.querySelectorAll('.service-btn');
+        serviceBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const service = btn.dataset.service;
+                this.showServiceInfo(service);
+            });
+        });
+        
+        // Botón "Nuestros Servicios" en hero
+        const servicesBtn = document.querySelector('.services-btn');
+        if (servicesBtn) {
+            servicesBtn.addEventListener('click', () => {
+                document.getElementById('servicios').scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+            });
+        }
+    }
+
+    setupContactForm() {
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm && this.modules.forms) {
+            // El forms module ya maneja el envío, pero podemos añadir lógica adicional
+            contactForm.addEventListener('submit', (e) => {
+                // Lógica adicional si es necesaria
+                console.log('📧 Formulario de contacto enviado');
+            });
+        }
+    }
+
+    showLoginModal() {
+        // Crear modal de login dinámicamente
+        const modalHtml = `
+            <div id="loginModal" class="modal">
+                <div class="modal-content modal-small">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Iniciar Sesión</h3>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <form id="loginForm" class="login-form">
+                            <div class="form-group">
+                                <label for="loginEmail">Email</label>
+                                <input type="email" id="loginEmail" name="email" placeholder="tu@email.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginPassword">Contraseña</label>
+                                <input type="password" id="loginPassword" name="password" placeholder="••••••••" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Ingresar
+                            </button>
+                        </form>
+                        <div style="text-align: center; margin-top: var(--space-lg);">
+                            <p style="color: var(--gray-600); font-size: 0.9rem;">
+                                ¿No tienes cuenta? <a href="#" style="color: var(--primary-blue);">Regístrate aquí</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Añadir modal al contenedor
+        const modalsContainer = document.getElementById('modalsContainer') || document.body;
+        modalsContainer.insertAdjacentHTML('beforeend', modalHtml);
+        
+        // Mostrar modal
+        if (this.modules.ui) {
+            this.modules.ui.showModal('loginModal');
+        }
+        
+        // Configurar formulario
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleLogin(loginForm);
+            });
+        }
+        
+        // Configurar cierre del modal
+        const closeBtn = document.querySelector('#loginModal .close-modal');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                if (this.modules.ui) {
+                    this.modules.ui.hideModal('loginModal');
+                }
+            });
+        }
+    }
+
+    showContactModal() {
+        // Simplemente hacer scroll a la sección de contacto
+        document.getElementById('contacto').scrollIntoView({ 
+            behavior: 'smooth' 
+        });
+        
+        // Opcional: mostrar notificación
+        if (this.modules.helpers) {
+            this.modules.helpers.showNotification('Completa el formulario de contacto', 'info');
+        }
+    }
+
+    showServiceInfo(service) {
+        const serviceNames = {
+            'soporte': 'Soporte Técnico 24/7',
+            'infraestructura': 'Infraestructura IT',
+            'desarrollo': 'Desarrollo de Software',
+            'ciberseguridad': 'Ciberseguridad',
+            'cloud': 'Cloud & Hosting',
+            'bases-datos': 'Base de Datos'
+        };
+        
+        const serviceName = serviceNames[service] || 'Servicio';
+        
+        if (this.modules.helpers) {
+            this.modules.helpers.showNotification(`Interesado en: ${serviceName}`, 'info');
+        }
+        
+        // Hacer scroll al formulario de contacto
+        setTimeout(() => {
+            document.getElementById('contacto').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+            
+            // Seleccionar el servicio en el formulario
+            const serviceSelect = document.getElementById('contactService');
+            if (serviceSelect) {
+                serviceSelect.value = service;
+            }
+        }, 1000);
+    }
+
+    async handleLogin(form) {
+        const formData = new FormData(form);
+        const email = formData.get('email');
+        const password = formData.get('password');
+        
+        try {
+            // Mostrar loading
+            let loading;
+            if (this.modules.ui) {
+                loading = this.modules.ui.showLoading(form);
+            }
+            
+            // Simular proceso de login
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Ocultar loading
+            if (this.modules.ui && loading) {
+                this.modules.ui.hideLoading(loading);
+            }
+            
+            // Mostrar notificación de éxito
+            if (this.modules.helpers) {
+                this.modules.helpers.showNotification('¡Login exitoso! Bienvenido', 'success');
+            }
+            
+            // Cerrar modal
+            if (this.modules.ui) {
+                this.modules.ui.hideModal('loginModal');
+            }
+            
+            // Actualizar UI para usuario logueado
+            this.updateUIForLoggedInUser(email);
+            
+        } catch (error) {
+            // Ocultar loading
+            if (this.modules.ui && loading) {
+                this.modules.ui.hideLoading(loading);
+            }
+            
+            // Mostrar error
+            if (this.modules.helpers) {
+                this.modules.helpers.showNotification('Error en el login. Intenta nuevamente.', 'error');
+            }
+        }
+    }
+
+    updateUIForLoggedInUser(email) {
+        const loginBtn = document.querySelector('.login-btn');
+        if (loginBtn) {
+            loginBtn.innerHTML = `
+                <i class="fas fa-user"></i>
+                ${email.split('@')[0]}
+            `;
+            loginBtn.classList.add('logged-in');
+            
+            // Cambiar comportamiento a logout
+            loginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleLogout();
+            });
+        }
+        
+        this.currentUser = { email: email, name: email.split('@')[0] };
+        console.log('👤 Usuario logueado:', this.currentUser);
+    }
+
+    handleLogout() {
+        this.currentUser = null;
+        
+        const loginBtn = document.querySelector('.login-btn');
+        if (loginBtn) {
+            loginBtn.innerHTML = `
+                <i class="fas fa-sign-in-alt"></i>
+                Acceder
+            `;
+            loginBtn.classList.remove('logged-in');
+            
+            // Restaurar comportamiento original
+            loginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showLoginModal();
+            });
+        }
+        
+        if (this.modules.helpers) {
+            this.modules.helpers.showNotification('Sesión cerrada correctamente', 'info');
+        }
+        
+        console.log('👤 Usuario deslogueado');
     }
 
     initializeModules() {
