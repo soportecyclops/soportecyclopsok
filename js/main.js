@@ -1,3 +1,4 @@
+// Main Application - Soporte Cyclops
 class MainApp {
     constructor() {
         this.modules = {};
@@ -8,9 +9,6 @@ class MainApp {
         try {
             console.log('🚀 Inicializando aplicación Soporte Cyclops...');
 
-            // Show loading overlay
-            this.showLoading();
-
             // Initialize core modules
             await this.initializeModules();
 
@@ -20,43 +18,41 @@ class MainApp {
             // Set up event listeners
             this.setupEventListeners();
 
-            // Initialize projects module
-            this.modules.projects = new Projects();
-            this.modules.projects.init();
-
-            // Hide loading overlay
-            this.hideLoading();
-
             this.isInitialized = true;
             console.log('✅ Aplicación inicializada correctamente');
 
-            // Run integrity check
-            setTimeout(() => {
-                if (typeof IntegrityChecker !== 'undefined') {
-                    IntegrityChecker.check();
-                }
-            }, 1000);
-
         } catch (error) {
             console.error('❌ Error inicializando aplicación:', error);
-            this.hideLoading();
+            this.showError(error);
         }
     }
 
     async initializeModules() {
-        // Modules are loaded via script tags, just ensure they're available
-        this.modules.ui = window.UI || new UI();
-        this.modules.auth = window.Auth || new Auth();
-        this.modules.forms = window.Forms || new Forms();
-        this.modules.tickets = window.Tickets || new Tickets();
-        this.modules.agenda = window.Agenda || new Agenda();
+        // Wait for modules to be loaded by robust-loader
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Initialize available modules
+        if (window.UI) {
+            this.modules.ui = window.UI;
+            this.modules.ui.init();
+        }
+        
+        if (window.Auth) {
+            this.modules.auth = window.Auth;
+            this.modules.auth.init();
+        }
+        
+        if (window.Forms) {
+            this.modules.forms = window.Forms;
+            this.modules.forms.init();
+        }
+        
+        if (window.Projects) {
+            this.modules.projects = window.Projects;
+            this.modules.projects.init();
+        }
 
-        // Initialize each module
-        Object.values(this.modules).forEach(module => {
-            if (module && typeof module.init === 'function') {
-                module.init();
-            }
-        });
+        console.log('📦 Módulos inicializados:', Object.keys(this.modules));
     }
 
     initializeUI() {
@@ -167,52 +163,75 @@ class MainApp {
         const loginBtn = document.getElementById('loginBtn');
         if (loginBtn) {
             loginBtn.addEventListener('click', () => {
-                this.modules.ui.showModal(document.getElementById('loginModal'));
-            });
-        }
-
-        // Modal close buttons
-        const closeButtons = document.querySelectorAll('.modal-close');
-        closeButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                const modal = e.target.closest('.modal');
-                this.modules.ui.hideModal(modal);
+                this.showLoginModal();
             });
         }
 
         // Contact form
         const contactForm = document.getElementById('contactForm');
-        if (contactForm && this.modules.forms) {
+        if (contactForm) {
             contactForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                this.modules.forms.handleContactSubmit(e);
+                this.handleContactSubmit(e);
             });
         }
 
         // Login form
         const loginForm = document.getElementById('loginForm');
-        if (loginForm && this.modules.auth) {
+        if (loginForm) {
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                this.modules.auth.handleLogin(e);
+                this.handleLoginSubmit(e);
             });
         }
     }
 
-    showLoading() {
-        const overlay = document.getElementById('loadingOverlay');
-        if (overlay) {
-            overlay.style.display = 'flex';
+    showLoginModal() {
+        const modal = document.getElementById('loginModal');
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
     }
 
-    hideLoading() {
-        const overlay = document.getElementById('loadingOverlay');
-        if (overlay) {
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 500);
+    hideLoginModal() {
+        const modal = document.getElementById('loginModal');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
         }
+    }
+
+    handleContactSubmit(e) {
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        
+        console.log('📧 Enviando formulario de contacto:', data);
+        
+        // Simular envío
+        setTimeout(() => {
+            alert('✅ Mensaje enviado correctamente. Te contactaremos pronto.');
+            e.target.reset();
+        }, 1000);
+    }
+
+    handleLoginSubmit(e) {
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        
+        console.log('🔐 Intentando login:', data);
+        
+        // Simular login
+        setTimeout(() => {
+            alert('✅ Login exitoso (simulado)');
+            this.hideLoginModal();
+            e.target.reset();
+        }, 1000);
+    }
+
+    showError(error) {
+        console.error('💥 Error en la aplicación:', error);
+        // Puedes mostrar una notificación al usuario aquí
     }
 }
 
@@ -231,15 +250,29 @@ function scrollToSection(sectionId) {
 }
 
 function openProject(projectId) {
-    if (window.app && window.app.modules.projects) {
-        window.app.modules.projects.openProject(projectId);
+    if (window.Projects) {
+        window.Projects.openProject(projectId);
+    } else {
+        console.warn('Projects module not available');
+        // Fallback: open in new tab
+        const projects = {
+            cyclobot: 'https://soportecyclops.github.io/CycloBot/',
+            original: 'https://soportecyclops.github.io/soportecyclopsoficial/'
+        };
+        
+        if (projects[projectId]) {
+            window.open(projects[projectId], '_blank');
+        }
     }
 }
 
-// Initialize application when DOM is loaded
+// Initialize application when modules are ready
 document.addEventListener('DOMContentLoaded', () => {
-    window.app = new MainApp();
-    window.app.initialize();
+    // Wait a bit for modules to load
+    setTimeout(() => {
+        window.app = new MainApp();
+        window.app.initialize().catch(console.error);
+    }, 500);
 });
 
 // Global registration
