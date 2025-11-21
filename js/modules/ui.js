@@ -1,6 +1,6 @@
 // UI Module - Manejo de interfaz de usuario
-if (typeof window.UI === 'undefined') {
-    window.UI = {
+if (typeof window.UIModule === 'undefined') {
+    window.UIModule = {
         init: function() {
             console.log('🎨 Inicializando UI module');
             this.initModals();
@@ -25,6 +25,14 @@ if (typeof window.UI === 'undefined') {
                     }
                 }
             });
+
+            // Cerrar modales con botones de cerrar
+            document.querySelectorAll('.modal-close').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const modal = e.target.closest('.modal');
+                    this.hideModal(modal);
+                });
+            });
         },
 
         initMobileMenu: function() {
@@ -35,6 +43,15 @@ if (typeof window.UI === 'undefined') {
                 menuBtn.addEventListener('click', () => {
                     menuBtn.classList.toggle('active');
                     nav.classList.toggle('active');
+                });
+
+                // Cerrar menú al hacer click en un link
+                const navLinks = nav.querySelectorAll('.nav-link');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        menuBtn.classList.remove('active');
+                        nav.classList.remove('active');
+                    });
                 });
             }
         },
@@ -56,6 +73,9 @@ if (typeof window.UI === 'undefined') {
                             top: targetPosition,
                             behavior: 'smooth'
                         });
+
+                        // Actualizar navegación activa
+                        this.updateActiveNav(targetId.replace('#', ''));
                     }
                 });
             });
@@ -120,17 +140,110 @@ if (typeof window.UI === 'undefined') {
                     link.classList.add('active');
                 }
             });
+        },
+
+        // Método para mostrar notificaciones (fallback si Helpers no está disponible)
+        showNotification: function(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-message">${message}</span>
+                    <button class="notification-close">&times;</button>
+                </div>
+            `;
+
+            // Estilos básicos para la notificación
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
+                color: white;
+                padding: 16px;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 10000;
+                max-width: 400px;
+                animation: slideIn 0.3s ease-out;
+            `;
+
+            // Agregar estilos de animación si no existen
+            if (!document.querySelector('#notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    .notification-close {
+                        background: none;
+                        border: none;
+                        color: white;
+                        font-size: 18px;
+                        cursor: pointer;
+                        margin-left: 10px;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            document.body.appendChild(notification);
+
+            // Auto-remover después de 5 segundos
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideIn 0.3s ease-out reverse';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }
+            }, 5000);
+
+            // Cerrar al hacer click
+            notification.querySelector('.notification-close').onclick = () => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            };
+        },
+
+        // Método para toggle de elementos
+        toggleElement: function(element) {
+            if (element) {
+                element.classList.toggle('active');
+            }
+        },
+
+        // Método para actualizar el header en scroll
+        initHeaderScroll: function() {
+            const header = document.querySelector('.main-header');
+            
+            if (header) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 100) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                });
+            }
         }
     };
 
     // Auto-inicialización cuando el DOM esté listo
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => window.UI.init());
+        document.addEventListener('DOMContentLoaded', () => {
+            window.UIModule.init();
+            window.UIModule.initHeaderScroll();
+        });
     } else {
-        window.UI.init();
+        window.UIModule.init();
+        window.UIModule.initHeaderScroll();
     }
 
     console.log('✅ UI module cargado y disponible globalmente');
 }
-// Global registration
-window.UIModule = UIModule;
