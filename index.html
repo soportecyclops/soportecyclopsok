@@ -571,48 +571,9 @@
     <!-- Container para Modals -->
     <div id="modalsContainer"></div>
 
-<!-- Scripts JavaScript - LOADER DE EMERGENCIA -->
-<script>
-// Cargador secuencial garantizado
-console.log('🚀 Iniciando carga secuencial...');
-
-const scripts = [
-    'js/utils/helpers.js',
-    'js/modules/ui.js',
-    'js/modules/auth.js',
-    'js/modules/forms.js', 
-    'js/modules/tickets.js',
-    'js/modules/agenda.js',
-    'js/main.js'
-];
-
-function loadScript(src) {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = src;
-        script.onload = () => {
-            console.log('✅', src);
-            resolve();
-        };
-        script.onerror = () => {
-            console.error('❌', src);
-            reject();
-        };
-        document.head.appendChild(script);
-    });
-}
-
-async function loadAll() {
-    for (const script of scripts) {
-        await loadScript(script);
-    }
-    console.log('🎉 Todos los scripts cargados!');
-}
-
-loadAll().catch(error => {
-    console.error('💥 Error fatal:', error);
-});
-</script>
+<!-- Reemplaza TODOS tus scripts con esto -->
+<script src="js/diagnostic.js"></script>
+<script src="js/robust-loader.js"></script>
 
     <!-- Service Worker (opcional) -->
     <script>
