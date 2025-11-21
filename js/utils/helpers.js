@@ -58,6 +58,7 @@ class Helpers {
             font-weight: 500;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: transform 0.3s ease;
+            transform: translateX(100%);
         `;
 
         const colors = {
@@ -86,5 +87,24 @@ class Helpers {
                 }
             }, 300);
         }, 5000);
+    }
+
+    // Nuevos métodos helpers
+    generateId(prefix = '') {
+        return prefix + Math.random().toString(36).substr(2, 9);
+    }
+
+    formatDate(date) {
+        return new Date(date).toLocaleDateString('es-AR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    sanitizeHTML(str) {
+        const temp = document.createElement('div');
+        temp.textContent = str;
+        return temp.innerHTML;
     }
 }
