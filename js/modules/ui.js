@@ -65,36 +65,36 @@ class UIModule {
         }
     }
 
-    initSmoothScroll() {
-        const links = document.querySelectorAll('a[href^="#"]');
-        
-        links.forEach(link => {
-            link.addEventListener('click', (e) => {
-                const targetId = link.getAttribute('href');
+    initSmoothScroll: function() {
+    const links = document.querySelectorAll('a[href^="#"]');
+    
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            const targetId = link.getAttribute('href');
+            
+            // Ignorar enlaces que solo tienen "#"
+            if (targetId === '#') {
+                return;
+            }
+            
+            e.preventDefault();
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                const headerHeight = document.querySelector('.main-header').offsetHeight;
+                const targetPosition = targetElement.offsetTop - headerHeight - 20;
                 
-                // Ignorar enlaces que solo tienen "#"
-                if (targetId === '#') {
-                    return;
-                }
-                
-                e.preventDefault();
-                const targetElement = document.querySelector(targetId);
-                
-                if (targetElement) {
-                    const headerHeight = document.querySelector('.main-header').offsetHeight;
-                    const targetPosition = targetElement.offsetTop - headerHeight - 20;
-                    
-                    window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
-                    });
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
 
-                    // Actualizar navegación activa
-                    this.updateActiveNav(targetId.replace('#', ''));
-                }
-            });
+                // Actualizar navegación activa
+                this.updateActiveNav(targetId.replace('#', ''));
+            }
         });
-    }
+    });
+},
 
     initHeaderScroll() {
         const header = document.querySelector('.main-header');
