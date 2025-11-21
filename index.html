@@ -571,10 +571,107 @@
     <!-- Container para Modals -->
     <div id="modalsContainer"></div>
 
-    <!-- Scripts de diagnóstico y corrección -->
-    <script src="js/diagnostic.js"></script>
-    <script src="js/fix-modules.js"></script>
-    <script src="js/robust-loader.js"></script>
+    <!-- Scripts JavaScript - LOADER DE EMERGENCIA -->
+<script>
+console.log('🚀 INICIANDO CARGA DE EMERGENCIA');
+
+// Función para inyectar código de registro global
+function injectGlobalRegistration(moduleName) {
+    const code = `
+        if (typeof ${moduleName} !== 'undefined') {
+            window.${moduleName} = ${moduleName};
+            console.log('✅ ${moduleName} registrado globalmente');
+        }
+    `;
+    return code;
+}
+
+// Cargar módulos con registro forzado
+async function loadModuleWithRegistration(modulePath, moduleName) {
+    return new Promise((resolve, reject) => {
+        fetch(modulePath)
+            .then(response => response.text())
+            .then(code => {
+                // Añadir registro global al código
+                const modifiedCode = code + `\n// REGISTRO GLOBAL INYECTADO\nwindow.${moduleName} = ${moduleName};\nconsole.log('✅ ${moduleName} registrado');`;
+                
+                // Ejecutar el código modificado
+                const script = document.createElement('script');
+                script.textContent = modifiedCode;
+                document.head.appendChild(script);
+                
+                // Verificar que se registró
+                setTimeout(() => {
+                    if (typeof window[moduleName] !== 'undefined') {
+                        console.log(`✅ ${moduleName} cargado correctamente`);
+                        resolve();
+                    } else {
+                        console.error(`❌ ${moduleName} no se pudo registrar`);
+                        reject(new Error(`${moduleName} registration failed`));
+                    }
+                }, 100);
+            })
+            .catch(error => {
+                console.error(`❌ Error cargando ${modulePath}:`, error);
+                reject(error);
+            });
+    });
+}
+
+// Cargar todos los módulos
+async function loadAllModules() {
+    const modules = [
+        { path: 'js/utils/helpers.js', name: 'Helpers' },
+        { path: 'js/modules/ui.js', name: 'UIModule' },
+        { path: 'js/modules/auth.js', name: 'AuthModule' },
+        { path: 'js/modules/forms.js', name: 'FormsModule' },
+        { path: 'js/modules/tickets.js', name: 'TicketsModule' },
+        { path: 'js/modules/agenda.js', name: 'AgendaModule' }
+    ];
+
+    console.log('📦 Cargando módulos con registro forzado...');
+
+    for (const module of modules) {
+        try {
+            await loadModuleWithRegistration(module.path, module.name);
+        } catch (error) {
+            console.error(`💥 Error en ${module.name}:`, error);
+            // Continuar con otros módulos
+        }
+        await new Promise(resolve => setTimeout(resolve, 200));
+    }
+
+    // Verificar estado final
+    console.log('📊 ESTADO FINAL:');
+    modules.forEach(module => {
+        const status = typeof window[module.name] !== 'undefined' ? '✅' : '❌';
+        console.log(`${status} ${module.name}`);
+    });
+
+    // Cargar main.js si todos los módulos críticos están listos
+    const criticalModules = ['Helpers', 'UIModule', 'AuthModule', 'FormsModule'];
+    const allCriticalLoaded = criticalModules.every(mod => typeof window[mod] !== 'undefined');
+    
+    if (allCriticalLoaded) {
+        console.log('🎉 Cargando aplicación principal...');
+        loadModuleWithRegistration('js/main.js', 'CyclopsApp')
+            .then(() => {
+                if (typeof window.CyclopsApp !== 'undefined') {
+                    window.CyclopsAppInstance = new window.CyclopsApp();
+                    window.CyclopsAppInstance.init();
+                }
+            })
+            .catch(error => {
+                console.error('💥 Error cargando main.js:', error);
+            });
+    } else {
+        console.error('❌ Módulos críticos faltantes - no se puede cargar la aplicación');
+    }
+}
+
+// Iniciar carga
+document.addEventListener('DOMContentLoaded', loadAllModules);
+</script>
 
 </body>
 </html>
