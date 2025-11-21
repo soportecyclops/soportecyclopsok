@@ -1,4 +1,4 @@
-// js/modules/helpers.js - CONTENIDO COMPLETO Y CORREGIDO
+// js/utils/helpers.js - CONTENIDO CORRECTO
 console.log('🛠️ Cargando Helpers module...');
 
 class Helpers {
@@ -33,7 +33,6 @@ class Helpers {
     }
 
     formatPhone(phone) {
-        // Limpiar y formatear número de teléfono
         const cleaned = phone.replace(/\D/g, '');
         if (cleaned.length === 10) {
             return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '$1 $2-$3');
@@ -47,7 +46,6 @@ class Helpers {
     }
 
     showNotification(message, type = 'info') {
-        // Implementación simple de notificación
         const notification = document.createElement('div');
         notification.style.cssText = `
             position: fixed;
@@ -75,12 +73,10 @@ class Helpers {
 
         document.body.appendChild(notification);
 
-        // Animación de entrada
         setTimeout(() => {
             notification.style.transform = 'translateX(0)';
         }, 10);
 
-        // Auto-remover después de 5 segundos
         setTimeout(() => {
             notification.style.transform = 'translateX(100%)';
             setTimeout(() => {
@@ -91,7 +87,6 @@ class Helpers {
         }, 5000);
     }
 
-    // Nuevos métodos helpers
     generateId(prefix = '') {
         return prefix + Math.random().toString(36).substr(2, 9);
     }
@@ -110,7 +105,6 @@ class Helpers {
         return temp.innerHTML;
     }
 
-    // Método para verificar si un elemento está en viewport
     isInViewport(element) {
         const rect = element.getBoundingClientRect();
         return (
@@ -121,7 +115,6 @@ class Helpers {
         );
     }
 
-    // Método para capitalizar texto
     capitalize(text) {
         return text.charAt(0).toUpperCase() + text.slice(1);
     }
