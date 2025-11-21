@@ -1,0 +1,345 @@
+@import url('./variables.css');
+
+/* ===== ANIMACIONES TECNOLÓGICAS CYCLOPS ===== */
+
+/* Circuit Board Animation */
+@keyframes circuitFlow {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Data Transmission */
+@keyframes dataTransmission {
+    0% {
+        stroke-dashoffset: 1000;
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        stroke-dashoffset: 0;
+        opacity: 0;
+    }
+}
+
+/* Server Rack Lights */
+@keyframes serverRackPulse {
+    0%, 100% {
+        opacity: 0.3;
+        box-shadow: 0 0 5px var(--cyber-blue);
+    }
+    50% {
+        opacity: 1;
+        box-shadow: 0 0 20px var(--cyber-blue), 0 0 30px var(--cyber-blue);
+    }
+}
+
+/* Network Connection */
+@keyframes networkPulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Binary Rain Effect */
+@keyframes binaryRain {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(1000%);
+        opacity: 0;
+    }
+}
+
+/* Hologram Glitch Effect */
+@keyframes hologramGlitch {
+    0% {
+        transform: translateX(0);
+        filter: hue-rotate(0deg);
+    }
+    2% {
+        transform: translateX(-2px);
+        filter: hue-rotate(90deg);
+    }
+    4% {
+        transform: translateX(2px);
+        filter: hue-rotate(180deg);
+    }
+    6% {
+        transform: translateX(0);
+        filter: hue-rotate(0deg);
+    }
+    100% {
+        transform: translateX(0);
+        filter: hue-rotate(0deg);
+    }
+}
+
+/* Loading Dots with Tech Theme */
+@keyframes loadingTech {
+    0%, 20% {
+        content: 'Conectando';
+    }
+    40% {
+        content: 'Conectando.';
+    }
+    60% {
+        content: 'Conectando..';
+    }
+    80%, 100% {
+        content: 'Conectando...';
+    }
+}
+
+/* Radar Scan Animation */
+@keyframes radarScan {
+    0% {
+        transform: rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        transform: rotate(360deg);
+        opacity: 1;
+    }
+}
+
+/* Data Stream Flow */
+@keyframes dataStream {
+    0% {
+        transform: translateX(-100%) translateY(-50%);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%) translateY(-50%);
+        opacity: 0;
+    }
+}
+
+/* Chip Glow Effect */
+@keyframes chipGlow {
+    0%, 100% {
+        box-shadow: 
+            0 0 5px var(--primary-blue),
+            inset 0 0 5px rgba(0, 102, 204, 0.3);
+    }
+    50% {
+        box-shadow: 
+            0 0 20px var(--primary-blue),
+            0 0 30px var(--cyber-blue),
+            inset 0 0 10px rgba(0, 102, 204, 0.5);
+    }
+}
+
+/* Terminal Typing */
+@keyframes terminalTyping {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes terminalBlink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Satellite Orbit */
+@keyframes satelliteOrbit {
+    0% {
+        transform: rotate(0deg) translateX(100px) rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg) translateX(100px) rotate(-360deg);
+    }
+}
+
+/* Network Node Connection */
+@keyframes nodeConnection {
+    0% {
+        stroke-dasharray: 0, 1000;
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        stroke-dasharray: 1000, 0;
+        opacity: 0;
+    }
+}
+
+/* ===== CLASES DE ANIMACIÓN TECNOLÓGICAS ===== */
+
+.animate-circuit {
+    animation: circuitFlow 3s linear infinite;
+}
+
+.animate-data {
+    animation: dataTransmission 2s ease-in-out infinite;
+}
+
+.animate-server {
+    animation: serverRackPulse 2s ease-in-out infinite;
+}
+
+.animate-network {
+    animation: networkPulse 3s ease-in-out infinite;
+}
+
+.animate-binary {
+    animation: binaryRain 5s linear infinite;
+}
+
+.animate-hologram {
+    animation: hologramGlitch 10s ease-in-out infinite;
+}
+
+.animate-radar {
+    animation: radarScan 4s linear infinite;
+}
+
+.animate-datastream {
+    animation: dataStream 4s linear infinite;
+}
+
+.animate-chip {
+    animation: chipGlow 3s ease-in-out infinite;
+}
+
+.animate-terminal {
+    animation: terminalTyping 3s steps(40, end), terminalBlink 0.75s step-end infinite;
+}
+
+.animate-satellite {
+    animation: satelliteOrbit 8s linear infinite;
+}
+
+.animate-node {
+    animation: nodeConnection 4s ease-in-out infinite;
+}
+
+/* ===== EFECTOS ESPECIALES TECNOLÓGICOS ===== */
+
+.tech-glow {
+    position: relative;
+}
+
+.tech-glow::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--primary-gradient);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.tech-glow:hover::after {
+    opacity: 1;
+    animation: chipGlow 2s ease-in-out infinite;
+}
+
+.data-stream {
+    position: relative;
+    overflow: hidden;
+}
+
+.data-stream::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--data-green), transparent);
+    animation: dataStream 3s linear infinite;
+}
+
+.network-grid {
+    display: grid;
+    gap: 1px;
+    background: 
+        linear-gradient(90deg, transparent 49%, var(--border-light) 50%, transparent 51%),
+        linear-gradient(0deg, transparent 49%, var(--border-light) 50%, transparent 51%);
+    background-size: 20px 20px;
+    animation: networkPulse 4s ease-in-out infinite;
+}
+
+/* ===== RESPONSIVE ANIMATIONS ===== */
+@media (prefers-reduced-motion: reduce) {
+    .circuit-background,
+    .tech-badge,
+    .service-icon,
+    .server-light,
+    .data-packet,
+    .icon-pulse,
+    [class*="animate-"] {
+        animation: none !important;
+    }
+    
+    .service-card:hover,
+    .contact-card:hover,
+    .tech-item:hover {
+        transform: none !important;
+    }
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+@media (max-width: 768px) {
+    .circuit-background {
+        display: none;
+    }
+}
+
+/* High-performance devices only */
+@media (min-width: 1200px) and (prefers-reduced-motion: no-preference) {
+    .hero::before {
+        animation: heroFloat 15s ease-in-out infinite;
+    }
+}

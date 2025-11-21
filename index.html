@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soporte Cyclops - Soluciones Tecnológicas Integrales</title>
+    <meta name="description" content="Soporte técnico especializado en Cyclops. Soluciones rápidas y eficientes para empresas. Soporte 24/7, redes, seguridad y más.">
+    
+    <!-- CSS Modular -->
+    <link rel="stylesheet" href="css/utils/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components/header.css">
+    <link rel="stylesheet" href="css/components/navigation.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/modals.css">
+    <link rel="stylesheet" href="css/components/footer.css">
+    <link rel="stylesheet" href="css/pages/home.css">
+    <link rel="stylesheet" href="css/utils/animations.css">
+    
+    <!-- Fuentes Premium -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+</head>
+<body>
+    <!-- Circuit Background Animation -->
+    <div class="circuit-background">
+        <div class="circuit-line"></div>
+        <div class="circuit-line"></div>
+        <div class="circuit-line"></div>
+        <div class="data-node" style="top: 20%; left: 10%;"></div>
+        <div class="data-node" style="top: 60%; left: 85%;"></div>
+        <div class="data-node" style="top: 80%; left: 25%;"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="mainHeader">
+        <nav class="nav-container">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-eye"></i>
+                    <div class="pulse-dot"></div>
+                </div>
+                <span>Soporte Cyclops</span>
+            </a>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#inicio" class="nav-link active" data-nav="home">Inicio</a></li>
+                <li><a href="#servicios" class="nav-link" data-nav="services">Servicios</a></li>
+                <li><a href="#nosotros" class="nav-link" data-nav="about">Nosotros</a></li>
+                <li><a href="#soporte" class="nav-link" data-nav="support">Soporte</a></li>
+                <li><a href="#contacto" class="nav-link" data-nav="contact">Contacto</a></li>
+            </ul>
+            
+            <div class="auth-buttons">
+                <button class="btn btn-outline" id="loginBtn" data-auth-action="login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Acceder
+                </button>
+                <button class="btn btn-primary" id="registerBtn" data-auth-action="register">
+                    <i class="fas fa-user-plus"></i>
+                    Registrarse
+                </button>
+                <div class="user-menu d-none" data-auth-state="authenticated">
+                    <span data-user-info="name">Usuario</span>
+                    <button class="btn btn-outline btn-sm" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="mainContent">
+        <!-- Hero Section -->
+        <section class="hero" id="inicio">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="tech-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        Soporte 24/7 Disponible
+                    </div>
+                    <h1 class="hero-title">
+                        Soluciones <span class="gradient-text">Tecnológicas</span> 
+                        para tu Empresa
+                    </h1>
+                    <p class="hero-description">
+                        En <strong>Soporte Cyclops</strong> brindamos soluciones IT integrales con respuesta inmediata. 
+                        Más de 10 años de experiencia en soporte técnico especializado.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number" data-count="500">0</span>
+                            <span class="stat-label">Clientes Satisfechos</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" data-count="24">0</span>
+                            <span class="stat-label">Soporte 24/7</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" data-count="30">0</span>
+                            <span class="stat-label">Min Respuesta</span>
+                        </div>
+                    </div>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary btn-lg btn-icon" id="emergencySupportBtn">
+                            <i class="fas fa-ambulance"></i>
+                            Emergencia Técnica
+                        </button>
+                        <button class="btn btn-outline btn-lg btn-icon" id="scheduleServiceBtn">
+                            <i class="fas fa-calendar-check"></i>
+                            Agendar Visita
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="tech-animation">
+                        <div class="server-rack">
+                            <div class="server-light"></div>
+                            <div class="server-light"></div>
+                            <div class="server-light"></div>
+                        </div>
+                        <div class="data-flow">
+                            <div class="data-packet"></div>
+                            <div class="data-packet"></div>
+                            <div class="data-packet"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section class="services" id="servicios">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Nuestros Servicios Especializados</h2>
+                    <p class="section-subtitle">Soluciones completas para mantener tu tecnología al 100%</p>
+                </div>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-desktop"></i>
+                            <div class="icon-pulse"></div>
+                        </div>
+                        <h3>Soporte Técnico Remoto</h3>
+                        <p>Solución inmediata de problemas técnicos via remota las 24/7. Acceso seguro a tus sistemas.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Respuesta en 30 min</li>
+                            <li><i class="fas fa-check"></i> Acceso seguro</li>
+                            <li><i class="fas fa-check"></i> Soporte multi-plataforma</li>
+                        </ul>
+                        <button class="btn btn-outline btn-sm" data-service="remote">
+                            Más Información
+                        </button>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-tools"></i>
+                            <div class="icon-pulse"></div>
+                        </div>
+                        <h3>Soporte On-Site</h3>
+                        <p>Asistencia técnica presencial especializada en tu ubicación. Diagnóstico y solución in situ.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Visitas programadas</li>
+                            <li><i class="fas fa-check"></i> Equipo especializado</li>
+                            <li><i class="fas fa-check"></i> Repuestos garantizados</li>
+                        </ul>
+                        <button class="btn btn-outline btn-sm" data-service="onsite">
+                            Más Información
+                        </button>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-shield-alt"></i>
+                            <div class="icon-pulse"></div>
+                        </div>
+                        <h3>Ciberseguridad</h3>
+                        <p>Protección y seguridad integral para tus sistemas, redes y datos corporativos.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Auditoría de seguridad</li>
+                            <li><i class="fas fa-check"></i> Firewall y antivirus</li>
+                            <li><i class="fas fa-check"></i> Backup automático</li>
+                        </ul>
+                        <button class="btn btn-outline btn-sm" data-service="security">
+                            Más Información
+                        </button>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-network-wired"></i>
+                            <div class="icon-pulse"></div>
+                        </div>
+                        <h3>Infraestructura de Red</h3>
+                        <p>Diseño, implementación y mantenimiento de redes corporativas escalables.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Cableado estructurado</li>
+                            <li><i class="fas fa-check"></i> Wi-Fi empresarial</li>
+                            <li><i class="fas fa-check"></i> VPN seguras</li>
+                        </ul>
+                        <button class="btn btn-outline btn-sm" data-service="network">
+                            Más Información
+                        </button>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-database"></i>
+                            <div class="icon-pulse"></div>
+                        </div>
+                        <h3>Backup & Recovery</h3>
+                        <p>Soluciones de respaldo y recuperación de datos para business continuity.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Backup en la nube</li>
+                            <li><i class="fas fa-check"></i> Recuperación ante desastres</li>
+                            <li><i class="fas fa-check"></i> Monitoreo 24/7</li>
+                        </ul>
+                        <button class="btn btn-outline btn-sm" data-service="backup">
+                            Más Información
+                        </button>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <i class="fas fa-cloud"></i>
+                            <div class="icon-pulse"></div>
+                        </div>
+                        <h3>Servicios en la Nube</h3>
+                        <p>Migración, implementación y gestión de servicios cloud para tu empresa.</p>
+                        <ul class="service-features">
+                            <li><i class="fas fa-check"></i> Migración asistida</li>
+                            <li><i class="fas fa-check"></i> AWS/Azure/Google Cloud</li>
+                            <li><i class="fas fa-check"></i> Optimización de costos</li>
+                        </ul>
+                        <button class="btn btn-outline btn-sm" data-service="cloud">
+                            Más Información
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="about" id="nosotros">
+            <div class="container">
+                <div class="about-grid">
+                    <div class="about-content">
+                        <h2 class="section-title">Expertos en Tecnología</h2>
+                        <p class="about-description">
+                            En <strong>Soporte Cyclops</strong> somos un equipo de profesionales certificados 
+                            con más de 10 años de experiencia en soluciones tecnológicas para empresas.
+                        </p>
+                        <div class="about-features">
+                            <div class="feature">
+                                <i class="fas fa-award"></i>
+                                <div>
+                                    <h4>Certificaciones</h4>
+                                    <p>Profesionales certificados en Microsoft, Cisco, AWS</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <h4>Respuesta Rápida</h4>
+                                    <p>Tiempo promedio de respuesta: 30 minutos</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-headset"></i>
+                                <div>
+                                    <h4>Soporte 24/7</h4>
+                                    <p>Disponibles todos los días del año</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-visual">
+                        <div class="tech-stack">
+                            <div class="tech-item">
+                                <i class="fab fa-microsoft"></i>
+                                <span>Microsoft</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="fab fa-aws"></i>
+                                <span>AWS</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="fab fa-google"></i>
+                                <span>Google Cloud</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="fas fa-network-wired"></i>
+                                <span>Cisco</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Support Section -->
+        <section class="support" id="soporte">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Solicitar Soporte Técnico</h2>
+                    <p class="section-subtitle">¿Necesitas ayuda? Estamos aquí para resolver tus problemas técnicos</p>
+                </div>
+                <div class="support-options">
+                    <div class="support-cards">
+                        <div class="support-card urgent">
+                            <div class="support-icon">
+                                <i class="fas fa-ambulance"></i>
+                            </div>
+                            <h3>Emergencia Crítica</h3>
+                            <p>Sistema caído o problema grave que afecta tus operaciones</p>
+                            <div class="response-time">
+                                <i class="fas fa-bolt"></i>
+                                Respuesta: 15-30 min
+                            </div>
+                            <button class="btn btn-primary" onclick="window.cyclops.app.getModule('ui').openModal('emergencyModal')">
+                                Solicitar Ahora
+                            </button>
+                        </div>
+
+                        <div class="support-card standard">
+                            <div class="support-icon">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <h3>Soporte Estándar</h3>
+                            <p>Problemas técnicos que requieren solución programada</p>
+                            <div class="response-time">
+                                <i class="fas fa-clock"></i>
+                                Respuesta: 2-4 horas
+                            </div>
+                            <button class="btn btn-outline" onclick="window.cyclops.app.getModule('ui').openModal('supportModal')">
+                                Solicitar Soporte
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="support-form-container">
+                        <form id="supportForm" class="form-container">
+                            <h3>Formulario de Soporte</h3>
+                            <div class="form-group">
+                                <label for="supportType" class="form-label">Tipo de Problema</label>
+                                <select id="supportType" name="supportType" class="form-select" required>
+                                    <option value="">Seleccionar tipo...</option>
+                                    <option value="hardware">Hardware</option>
+                                    <option value="software">Software</option>
+                                    <option value="network">Redes</option>
+                                    <option value="security">Seguridad</option>
+                                    <option value="email">Correo Electrónico</option>
+                                    <option value="backup">Backup & Recovery</option>
+                                    <option value="other">Otro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="supportUrgency" class="form-label">Nivel de Urgencia</label>
+                                <select id="supportUrgency" name="urgency" class="form-select" required>
+                                    <option value="low">Baja - No afecta operaciones</option>
+                                    <option value="medium" selected>Media - Afecta parcialmente</option>
+                                    <option value="high">Alta - Afecta operaciones críticas</option>
+                                    <option value="critical">Crítica - Sistema caído</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="supportDescription" class="form-label">Descripción Detallada</label>
+                                <textarea id="supportDescription" name="description" class="form-textarea" 
+                                          placeholder="Describe el problema, pasos para reproducirlo, y cualquier mensaje de error..." 
+                                          required></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fas fa-paper-plane"></i>
+                                    Enviar Solicitud de Soporte
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact" id="contacto">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Contacto</h2>
+                    <p class="section-subtitle">Estamos aquí para ayudarte. Contáctanos por cualquier medio.</p>
+                </div>
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>Teléfonos de Contacto</h4>
+                                <a href="tel:+5491158992033" class="contact-link">+54 9 11 5899-2033</a>
+                                <a href="tel:+5491158992033" class="contact-link">+54 9 11 5899-2033</a>
+                                <small>Líneas rotativas - Whatsapp Business</small>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>Email Corporativo</h4>
+                                <a href="mailto:ventas@soportecyclops.com" class="contact-link">ventas@soportecyclops.com</a>
+                                <a href="mailto:soporte@soportecyclops.com" class="contact-link">soporte@soportecyclops.com</a>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>Horarios de Atención</h4>
+                                <p><strong>Soporte 24/7:</strong> Emergencias técnicas</p>
+                                <p><strong>Lunes a Viernes:</strong> 8:00 - 20:00 hs</p>
+                                <p><strong>Sábados:</strong> 9:00 - 14:00 hs</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-card">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h4>Zonas de Cobertura</h4>
+                                <p>Buenos Aires y Gran Buenos Aires</p>
+                                <p>Servicios remotos a todo el país</p>
+                                <small>Visitas on-site programadas</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-form">
+                        <form id="contactForm" class="form-container">
+                            <h3>Envíanos un Mensaje</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contactName" class="form-label">Nombre Completo</label>
+                                    <input type="text" id="contactName" name="name" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contactCompany" class="form-label">Empresa</label>
+                                    <input type="text" id="contactCompany" name="company" class="form-input">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contactEmail" class="form-label">Email</label>
+                                    <input type="email" id="contactEmail" name="email" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contactPhone" class="form-label">Teléfono</label>
+                                    <input type="tel" id="contactPhone" name="phone" class="form-input" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactSubject" class="form-label">Asunto</label>
+                                <select id="contactSubject" name="subject" class="form-select" required>
+                                    <option value="">Seleccionar asunto...</option>
+                                    <option value="consult">Consulta General</option>
+                                    <option value="quote">Cotización de Servicios</option>
+                                    <option value="support">Solicitud de Soporte</option>
+                                    <option value="emergency">Emergencia Técnica</option>
+                                    <option value="other">Otro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactMessage" class="form-label">Mensaje</label>
+                                <textarea id="contactMessage" name="message" class="form-textarea" 
+                                          placeholder="Describe tu consulta o requerimiento..." required></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fas fa-envelope"></i>
+                                    Enviar Mensaje
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" id="mainFooter">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-eye"></i>
+                        <span>Soporte Cyclops</span>
+                    </div>
+                    <p class="footer-description">
+                        Soluciones tecnológicas confiables y eficientes para tu negocio. 
+                        Más de 10 años de experiencia en soporte técnico especializado.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Servicios</h4>
+                    <ul class="footer-links">
+                        <li><a href="#servicios">Soporte Técnico Remoto</a></li>
+                        <li><a href="#servicios">Soporte On-Site</a></li>
+                        <li><a href="#servicios">Ciberseguridad</a></li>
+                        <li><a href="#servicios">Infraestructura de Red</a></li>
+                        <li><a href="#servicios">Backup & Recovery</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#servicios">Servicios</a></li>
+                        <li><a href="#nosotros">Nosotros</a></li>
+                        <li><a href="#soporte">Soporte</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <div class="footer-contact">
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <a href="tel:+5491158992033">+54 9 11 5899-2033</a>
+                                <small>Líneas rotativas</small>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <a href="mailto:ventas@soportecyclops.com">ventas@soportecyclops.com</a>
+                                <a href="mailto:soporte@soportecyclops.com">soporte@soportecyclops.com</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <span>Soporte 24/7</span>
+                                <small>Emergencias técnicas</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <p>&copy; 2024 Soporte Cyclops. Todos los derechos reservados.</p>
+                </div>
+                <div class="footer-legal">
+                    <a href="#">Política de Privacidad</a>
+                    <a href="#">Términos de Servicio</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals Container -->
+    <div id="modalsContainer">
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Acceder al Sistema</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <form id="loginForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="loginEmail" class="form-label">Email Corporativo</label>
+                        <input type="email" id="loginEmail" name="email" class="form-input" 
+                               placeholder="usuario@empresa.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword" class="form-label">Contraseña</label>
+                        <input type="password" id="loginPassword" name="password" class="form-input" required>
+                    </div>
+                    <div class="form-options">
+                        <label class="form-check">
+                            <input type="checkbox" class="form-check-input">
+                            <span class="form-check-label">Recordar sesión</span>
+                        </label>
+                        <a href="#" class="form-link">¿Olvidaste tu contraseña?</a>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Iniciar Sesión
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Emergency Modal -->
+        <div id="emergencyModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header emergency-header">
+                    <i class="fas fa-ambulance"></i>
+                    <h3>Emergencia Técnica</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="emergency-alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p><strong>Prioridad Máxima:</strong> Este servicio está reservado para situaciones críticas que afectan tus operaciones.</p>
+                    </div>
+                    <form id="emergencyForm" class="modal-form">
+                        <div class="form-group">
+                            <label class="form-label">Descripción de la Emergencia</label>
+                            <textarea name="emergencyDescription" class="form-textarea" 
+                                      placeholder="Describe brevemente la situación crítica y su impacto en las operaciones..." 
+                                      required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Teléfono de Contacto Inmediato</label>
+                            <input type="tel" name="emergencyPhone" class="form-input" 
+                                   placeholder="+54 9 11 1234-5678" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-emergency btn-block">
+                                <i class="fas fa-ambulance"></i>
+                                Solicitar Soporte de Emergencia
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/utils/constants.js"></script>
+    <script type="module" src="js/utils/helpers.js"></script>
+    <script type="module" src="js/utils/api.js"></script>
+    <script type="module" src="js/modules/ui.js"></script>
+    <script type="module" src="js/modules/auth.js"></script>
+    <script type="module" src="js/modules/forms.js"></script>
+    <script type="module" src="js/modules/tickets.js"></script>
+    <script type="module" src="js/modules/agenda.js"></script>
+    <script type="module" src="js/main.js"></script>
+    
+    <!-- Testing Scripts (Remover en producción) -->
+    <script type="module" src="js/test/integrity-check.js"></script>
+    <script type="module" src="js/test/module-test.js"></script>
+</body>
+</html>
