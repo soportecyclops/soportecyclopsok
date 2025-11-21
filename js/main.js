@@ -1,185 +1,127 @@
-// Importaciones de módulos
-import { UIModule } from './modules/ui.js';
-import { AuthModule } from './modules/auth.js';
-import { FormsModule } from './modules/forms.js';
-import { TicketsModule } from './modules/tickets.js';
-import { AgendaModule } from './modules/agenda.js';
-import { CONFIG } from './utils/constants.js';
+// js/main.js - VERSIÓN CORREGIDA
+import Helpers from './modules/helpers.js';
+import UIModule from './modules/ui.js';
+import AuthModule from './modules/auth.js';
+import FormsModule from './modules/forms.js';
+import TicketsModule from './modules/tickets.js';
+import AgendaModule from './modules/agenda.js';
 
-// Aplicación principal de Cyclops
 class CyclopsApp {
     constructor() {
         this.modules = {};
         this.isInitialized = false;
-        this.init();
     }
 
-    init() {
-        console.log(`🚀 Iniciando ${CONFIG.APP_NAME} v${CONFIG.VERSION}...`);
-        
+    async init() {
         try {
-            // Inicializar módulos en orden específico
-            this.initializeModules();
-            
-            // Configuración global
-            window.cyclops = {
-                app: this,
-                config: CONFIG,
-                version: CONFIG.VERSION,
-                utils: {
-                    helpers: window.Helpers,
-                    api: window.apiClient
-                }
-            };
+            if (this.isInitialized) {
+                console.warn('CyclopsApp ya está inicializado');
+                return;
+            }
 
+            // Inicializar módulos en orden correcto
+            await this.initializeModules();
+            
+            this.setupGlobalErrorHandling();
+            this.setupServiceWorker();
+            
             this.isInitialized = true;
-            
-            // Evento personalizado para indicar que la app está lista
-            document.dispatchEvent(new CustomEvent('cyclops:ready'));
-            
-            console.log('✅ Aplicación inicializada correctamente');
-            
+            console.log('✅ Soporte Cyclops inicializado correctamente');
+
         } catch (error) {
-            console.error('❌ Error crítico inicializando la aplicación:', error);
-            this.handleInitError(error);
+            console.error('❌ Error crítico al inicializar la aplicación:', error);
+            this.showFatalError(error);
         }
     }
 
     initializeModules() {
-        // Orden de inicialización importante
-        // 1. UI Module primero (maneja DOM y eventos básicos)
-        this.modules.ui = new UIModule();
-        
-        // 2. Auth Module (maneja autenticación y sesiones)
-        this.modules.auth = new AuthModule();
-        
-        // 3. Forms Module (maneja formularios y validaciones)
-        this.modules.forms = new FormsModule();
-        
-        // 4. Tickets Module (gestión de tickets de soporte)
-        this.modules.tickets = new TicketsModule();
-        
-        // 5. Agenda Module (calendario y eventos)
-        this.modules.agenda = new AgendaModule();
-    }
+        try {
+            // 1. Helpers primero (dependencia base)
+            this.modules.helpers = Helpers;
+            console.log('✅ Helpers inicializado');
 
-    handleInitError(error) {
-        // Mostrar error al usuario de manera amigable
-        const errorHtml = `
-            <div class="error-boundary">
-                <div class="error-content">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h2>Error al cargar la aplicación</h2>
-                    <p>Ha ocurrido un error al inicializar Soporte Cyclops. Por favor, recarga la página.</p>
-                    <button class="btn btn-primary" onclick="window.location.reload()">
-                        <i class="fas fa-redo"></i>
-                        Recargar Página
-                    </button>
-                    <details class="error-details">
-                        <summary>Detalles técnicos</summary>
-                        <pre>${error.stack}</pre>
-                    </details>
-                </div>
-            </div>
-        `;
+            // 2. UI Module (depende de Helpers)
+            this.modules.ui = new UIModule();
+            this.modules.ui.init();
+            console.log('✅ UI Module inicializado');
 
-        document.body.innerHTML = errorHtml;
-    }
+            // 3. Auth Module
+            this.modules.auth = new AuthModule();
+            this.modules.auth.init();
+            console.log('✅ Auth Module inicializado');
 
-    // Método para obtener módulos
-    getModule(moduleName) {
-        if (!this.modules[moduleName]) {
-            console.warn(`Módulo no encontrado: ${moduleName}`);
-            return null;
+            // 4. Forms Module (depende de Helpers y Auth)
+            this.modules.forms = new FormsModule();
+            this.modules.forms.init();
+            console.log('✅ Forms Module inicializado');
+
+            // 5. Módulos específicos de funcionalidad
+            this.modules.tickets = new TicketsModule();
+            this.modules.tickets.init();
+            console.log('✅ Tickets Module inicializado');
+
+            this.modules.agenda = new AgendaModule();
+            this.modules.agenda.init();
+            console.log('✅ Agenda Module inicializado');
+
+        } catch (error) {
+            console.error('Error al inicializar módulos:', error);
+            throw error;
         }
-        return this.modules[moduleName];
     }
 
-    // Método para verificar si un módulo está disponible
-    hasModule(moduleName) {
-        return !!this.modules[moduleName];
-    }
-
-    // Método para reiniciar la aplicación
-    restart() {
-        console.log('🔄 Reiniciando aplicación...');
-        
-        // Limpiar módulos
-        this.modules = {};
-        this.isInitialized = false;
-        
-        // Reinicializar
-        setTimeout(() => this.init(), 100);
-    }
-
-    // Método para obtener estado de la aplicación
-    getStatus() {
-        return {
-            initialized: this.isInitialized,
-            modules: Object.keys(this.modules),
-            config: CONFIG
-        };
-    }
-
-    // Método para manejar errores globales
-    setupErrorHandling() {
+    setupGlobalErrorHandling() {
         window.addEventListener('error', (event) => {
-            console.error('Error global:', event.error);
-            this.handleGlobalError(event.error);
+            console.error('Error global capturado:', event.error);
+            this.modules.helpers.showNotification('Ha ocurrido un error inesperado', 'error');
         });
 
         window.addEventListener('unhandledrejection', (event) => {
-            console.error('Promise rechazada no manejada:', event.reason);
-            this.handleGlobalError(event.reason);
+            console.error('Promise rechazada:', event.reason);
+            event.preventDefault();
         });
     }
 
-    handleGlobalError(error) {
-        // En producción, podrías enviar esto a un servicio de monitoreo
-        console.error('Error global manejado:', error);
-        
-        // Mostrar notificación al usuario solo si no es un error crítico
-        if (!this.isCriticalError(error)) {
-            window.Helpers.showNotification(
-                'Ha ocurrido un error inesperado. Si el problema persiste, contacta al soporte.',
-                'error'
-            );
+    async setupServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            try {
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                console.log('ServiceWorker registrado correctamente');
+            } catch (error) {
+                console.warn('ServiceWorker no registrado:', error);
+            }
         }
     }
 
-    isCriticalError(error) {
-        // Definir qué errores consideramos críticos
-        const criticalErrors = [
-            'NetworkError',
-            'TypeError',
-            'ReferenceError'
-        ];
+    showFatalError(error) {
+        // Mostrar interfaz de error al usuario
+        const errorHtml = `
+            <div class="error-container" style="padding: 2rem; text-align: center; background: #f8f9fa; border-radius: 8px; margin: 2rem;">
+                <h2 style="color: #dc3545;">Error al cargar la aplicación</h2>
+                <p>Ha ocurrido un error al inicializar Soporte Cyclops. Por favor, recarga la página.</p>
+                <button onclick="window.location.reload()" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+                    Recargar Página
+                </button>
+                <details style="margin-top: 1rem; text-align: left;">
+                    <summary>Detalles técnicos</summary>
+                    <pre style="background: #fff; padding: 1rem; border-radius: 4px; overflow: auto;">${error.stack}</pre>
+                </details>
+            </div>
+        `;
         
-        return criticalErrors.some(criticalError => 
-            error.name === criticalError || error.message.includes(criticalError)
-        );
+        document.body.innerHTML = errorHtml;
+    }
+
+    getModule(name) {
+        return this.modules[name];
     }
 }
 
-// Inicializar cuando el DOM esté listo
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        new CyclopsApp();
-    });
-} else {
-    new CyclopsApp();
-}
-
-// Configurar manejo de errores globales
-window.addEventListener('load', () => {
-    if (window.cyclops && window.cyclops.app) {
-        window.cyclops.app.setupErrorHandling();
-    }
+// Inicialización cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', async () => {
+    window.CyclopsApp = new CyclopsApp();
+    await window.CyclopsApp.init();
 });
 
-// Exportar para uso global si es necesario
-window.CyclopsApp = CyclopsApp;
-
-// Hacer disponibles utilidades globalmente para debugging
-window.Helpers = Helpers;
-window.apiClient = apiClient;
+// Export para uso en otros módulos si es necesario
+export default CyclopsApp;
