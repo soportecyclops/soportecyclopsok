@@ -132,3 +132,5 @@ if (typeof window.UI === 'undefined') {
 
     console.log('✅ UI module cargado y disponible globalmente');
 }
+// Global registration
+window.UIModule = UIModule;
